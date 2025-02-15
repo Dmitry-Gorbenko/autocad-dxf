@@ -1370,7 +1370,7 @@ const Entities = class {
 			if (json.subclass == "AcDbPolyline") {
 				if ((value & 1) === 1) {
 					json.type = "Closed";
-				} else if ((curr.value & 128) === 128) {
+				} else if ((value & 128) === 128) {
 					json.type = "Plinegen";
 				}
 			} else if (json.subclass == "AcDbSpline") {
