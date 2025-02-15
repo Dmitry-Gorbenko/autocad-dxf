@@ -14,7 +14,7 @@ const DIMSTYLE_CODES = require("./DIMSTYLE_CODES.json");
 const KEYS = require("./KEYS");
 const CODES = require("./CODES");
 
-const Entities = class {	
+const Entities = class {
 	constructor(data, tolerance) {
 		this.entities = [];
 		this.tables = {};
@@ -25,20 +25,20 @@ const Entities = class {
 		if (data && typeof data == "string") {
 			this.processData(data.split("\n"));
 		}
-	}	
-	
-	getTables = (array, COUNT) => {			
+	}
+
+	getTables = (array, COUNT) => {
 		let ttype, json;
 		while (COUNT < array.length - 1) {
 			const code = array[COUNT].trim();
-			const value = array[COUNT + 1].trim();	
+			const value = array[COUNT + 1].trim();
 			if (code == "0" && value == "TABLE") {
 				ttype = array[COUNT + 3].trim();
 				this.tables[ttype] = [];
 			} else if (code == "0" && value == "ENDSEC") {
 				return COUNT + 2;
 			}
-			
+
 			if (ttype == "APPID") {
 				if (code == "100" && value == "AcDbRegAppTableRecord") {
 					if (json) this.tables.APPID.push(json);
@@ -47,7 +47,7 @@ const Entities = class {
 					this.tables.APPID.push(json);
 					json = null;
 				} else if (json && code == "2") {
-					json.name = value;						
+					json.name = value;
 				}
 			} else if (ttype == "BLOCK_RECORD") {
 				if (code == "100" && value == "AcDbBlockTableRecord") {
@@ -58,7 +58,7 @@ const Entities = class {
 					json = null;
 				} else if (json && code == "2") {
 					json.name = value;
-				} 
+				}
 			} else if (ttype == "DIMSTYLE") {
 				if (code == "100" && value == "AcDbDimStyleTableRecord") {
 					if (json) this.tables.DIMSTYLE.push(json);
@@ -93,7 +93,7 @@ const Entities = class {
 							temp = "Over first extension";
 						} else if (value == "4") {
 							temp = "Over second extension";
-						} 
+						}
 						json[DIMSTYLE_CODES[code]] = temp;
 					} else if (code == "77") {
 						let temp;
@@ -107,7 +107,7 @@ const Entities = class {
 							temp = "Japanese Industry Standards (JIS)";
 						} else if (value == "4") {
 							temp = "Below dimension line";
-						} 
+						}
 						json[DIMSTYLE_CODES[code]] = temp;
 					} else if (code == "78" || code == "286") {
 						let temp;
@@ -123,7 +123,7 @@ const Entities = class {
 						} else if (value == "3") {
 							json.suppress_zero_inches = "No";
 							json.suppress_zero_feet = "Yes";
-						} 
+						}
 					}  else if (code == "284") {
 						let temp;
 						if (value == "0") {
@@ -138,7 +138,7 @@ const Entities = class {
 						} else if (value == "3") {
 							json.alt_suppress_leading_zeros = "Yes";
 							json.alt_suppress_trailing_zeros = "Yes";
-						} 
+						}
 					} else if (code == "79" || code == "285") {
 						let temp;
 						if (value == "0") {
@@ -153,7 +153,7 @@ const Entities = class {
 						} else if (value == "3") {
 							json.suppress_leading_zeros = "Yes";
 							json.suppress_trailing_zeros = "Yes";
-						} 
+						}
 					} else if (code == "148" || code == "171" || code == "179") {
 						json[DIMSTYLE_CODES[code]] = value;
 					} else if (code == "275") {
@@ -168,7 +168,7 @@ const Entities = class {
 							temp = "Radians";
 						} else if (value == "4") {
 							temp = "Surveyor's units";
-						} 
+						}
 						json[DIMSTYLE_CODES[code]] = temp;
 					} else if (code == "270") {
 						let temp;
@@ -186,7 +186,7 @@ const Entities = class {
 							temp = "Architectural";
 						} else if (value == "7") {
 							temp = "Fractional";
-						} 
+						}
 						json[DIMSTYLE_CODES[code]] = temp;
 					} else if (code == "277") {
 						let temp;
@@ -202,7 +202,7 @@ const Entities = class {
 							temp = "Fractional";
 						} else if (value == "6") {
 							temp = "Windows desktop";
-						} 
+						}
 						json[DIMSTYLE_CODES[code]] = temp;
 					} else if (code == "279") {
 						let temp;
@@ -212,7 +212,7 @@ const Entities = class {
 							temp = "Move text, add leader";
 						} else if (value == "2") {
 							temp = "Move text, no leader";
-						} 
+						}
 						json[DIMSTYLE_CODES[code]] = temp;
 					} else if (code == "283") {
 						let temp;
@@ -222,7 +222,7 @@ const Entities = class {
 							temp = "Middle";
 						} else if (value == "2") {
 							temp = "Bottom";
-						} 
+						}
 						json[DIMSTYLE_CODES[code]] = temp;
 					} else if (code == "289") {
 						let temp;
@@ -234,7 +234,7 @@ const Entities = class {
 							temp = "Text only";
 						} else if (value == "3") {
 							temp = "Best fit";
-						} 
+						}
 						json[DIMSTYLE_CODES[code]] = temp;
 					} else {
 						let temp = parseFloat(value);
@@ -244,7 +244,7 @@ const Entities = class {
 						}
 						json[DIMSTYLE_CODES[code]] = temp;
 					}
-				}					
+				}
 			} else if (ttype == "LAYER") {
 				if (code == "100" && value == "AcDbLayerTableRecord") {
 					if (json) this.tables.LAYER.push(json);
@@ -254,16 +254,16 @@ const Entities = class {
 					json = null;
 				} else if (json && code == "2") {
 					json.name = value;
-				} else if (json && code == "70") {							
+				} else if (json && code == "70") {
 					if (value == "0") {
-						json.status = "Thawed";  
+						json.status = "Thawed";
 					} else if (value == "1") {
-						json.status = "Frozen";  
+						json.status = "Frozen";
 					} else if (value == "2") {
-						json.status = "Frozen by default";  
+						json.status = "Frozen by default";
 					} else if (value == "4") {
-						json.status = "Locked";  
-					} 
+						json.status = "Locked";
+					}
 				} else if (json && code == "62") {
 					json.color_number = value;
 				} else if (json && code == "6") {
@@ -282,7 +282,7 @@ const Entities = class {
 					json.description = value;
 				} else if (json && code == "9") {
 					if (!json.embedded_texts) json.embedded_texts = [];
-					json.embedded_texts.push(value);						
+					json.embedded_texts.push(value);
 				} else if (json && code == "40") {
 					json.total_pattern_length = parseInt(value);
 				} else if (json && code == "44") {
@@ -300,20 +300,20 @@ const Entities = class {
 				} else if (json && code == "50") {
 					if (!json.embedded_element_rotations) json.embedded_element_rotations = [];
 					json.embedded_element_rotations.push(parseFloat(value));
-				} else if (json && code == "73") {							
+				} else if (json && code == "73") {
 					json.number_of_elements = parseInt(value);
-				} else if (json && code == "74") {	
+				} else if (json && code == "74") {
 					if (value == "0") {
-						json.embedded_element_type = "None";  
+						json.embedded_element_type = "None";
 					} else if (value == "1") {
-						json.embedded_element_rotation_type = "Absolute";  
+						json.embedded_element_rotation_type = "Absolute";
 					} else if (value == "2") {
-						json.embedded_element_type = "Text";  
+						json.embedded_element_type = "Text";
 					} else if (value == "4") {
-						json.embedded_element_type = "Shape";  
-					} 
-				} 
-			} else if (ttype == "STYLE") {	
+						json.embedded_element_type = "Shape";
+					}
+				}
+			} else if (ttype == "STYLE") {
 				if (code == "100" && value == "AcDbTextStyleTableRecord") {
 					if (json) this.tables.STYLE.push(json);
 					json = {text_height: 0};
@@ -328,22 +328,22 @@ const Entities = class {
 					json.width_factor = parseFloat(value);
 				} else if (json && code == "50") {
 					json.oblique_angle = parseFloat(value);
-				} else if (json && code == "70") {	
+				} else if (json && code == "70") {
 					if (value == "1") {
-						json.type = "Shape";  
+						json.type = "Shape";
 					} else if (value == "4") {
-						json.type = "Vertical text";  
-					} 
-				} else if (json && code == "71") {	
+						json.type = "Vertical text";
+					}
+				} else if (json && code == "71") {
 					if (value == "2") {
-						json.text_type = "Backward (mirrored in X)";  
+						json.text_type = "Backward (mirrored in X)";
 					} else if (value == "4") {
-						json.text_type = "Upside down (mirrored in Y)";  
-					} 
+						json.text_type = "Upside down (mirrored in Y)";
+					}
 				} else if (json && code == "1071") {
 					json.font_type = value;
-				} 
-			} else if (ttype == "UCS") {					
+				}
+			} else if (ttype == "UCS") {
 				if (code == "100" && value == "AcDbUCSTableRecord") {
 					if (json) this.tables.UCS.push(json);
 					json = {};
@@ -376,24 +376,24 @@ const Entities = class {
 					json.y_axis_direction.z = parseFloat(value);
 				} else if (json && code == "33") {
 					json.orthographic_origin.z = parseFloat(value);
-				} else if (json && code == "71") {	
+				} else if (json && code == "71") {
 					if (value == "1") {
-						json.orthographic_type = "Top";  
+						json.orthographic_type = "Top";
 					} else if (value == "2") {
-						json.orthographic_type = "Bottom";  
+						json.orthographic_type = "Bottom";
 					} else if (value == "3") {
-						json.orthographic_type = "Front";  
+						json.orthographic_type = "Front";
 					} else if (value == "4") {
-						json.orthographic_type = "Back";  
+						json.orthographic_type = "Back";
 					} else if (value == "5") {
-						json.orthographic_type = "Left";  
+						json.orthographic_type = "Left";
 					} else if (value == "6") {
-						json.orthographic_type = "Right";  
-					} 
+						json.orthographic_type = "Right";
+					}
 				} else if (json && code == "146") {
 					json.elevation = parseFloat(value);
 				}
-			} else if (ttype == "VIEW") {					
+			} else if (ttype == "VIEW") {
 				if (code == "100" && value == "AcDbViewTableRecord") {
 					if (json) this.tables.VIEW.push(json);
 					json = {hasUCS: false};
@@ -402,76 +402,76 @@ const Entities = class {
 					json = null;
 				} else if (json && code == "2") {
 					json.name = value;
-				} else if (json && code == "10") { 
+				} else if (json && code == "10") {
 					json.center = {x : parseFloat(value)};
-				} else if (json && code == "11") { 
+				} else if (json && code == "11") {
 					json.direction = {x : parseFloat(value)};
-				} else if (json && code == "12") { 
+				} else if (json && code == "12") {
 					json.target_point = {x: parseFloat(value)};
-				} else if (json && code == "20") { 
+				} else if (json && code == "20") {
 					json.center.y = parseFloat(value);
-				} else if (json && code == "21") { 
+				} else if (json && code == "21") {
 					json.direction.y = parseFloat(value);
-				} else if (json && code == "22") { 
+				} else if (json && code == "22") {
 					json.target_point.y = parseFloat(value);
-				} else if (json && code == "31") { 
+				} else if (json && code == "31") {
 					json.direction.z = parseFloat(value);
-				} else if (json && code == "32") { 
+				} else if (json && code == "32") {
 					json.target_point.z = parseFloat(value);
-				} else if (json && code == "40") { 
+				} else if (json && code == "40") {
 					json.height = parseFloat(value);
-				} else if (json && code == "41") { 
+				} else if (json && code == "41") {
 					json.width = parseFloat(value);
-				} else if (json && code == "42") { 
+				} else if (json && code == "42") {
 					json.lens_angle = parseFloat(value);
-				} else if (json && code == "50") { 
+				} else if (json && code == "50") {
 					json.twist_angle = parseFloat(value);
-				} else if (json && code == "70") {	
+				} else if (json && code == "70") {
 					if (value == "1") {
-						json.type = "Paper space view";  
-					} 
-				} else if (json && code == "72") {	
+						json.type = "Paper space view";
+					}
+				} else if (json && code == "72") {
 					if (value == "1") {
-						json.hasUCS = true;  
-					} 
-				} else if (json && code == "79") {	
+						json.hasUCS = true;
+					}
+				} else if (json && code == "79") {
 					if (value == "0") {
-						json.orthographic_type = "N/A";  
+						json.orthographic_type = "N/A";
 					} else if (value == "1") {
-						json.orthographic_type = "Top";  
+						json.orthographic_type = "Top";
 					} else if (value == "2") {
-						json.orthographic_type = "Bottom";  
+						json.orthographic_type = "Bottom";
 					} else if (value == "3") {
-						json.orthographic_type = "Front";  
+						json.orthographic_type = "Front";
 					} else if (value == "4") {
-						json.orthographic_type = "Back";  
+						json.orthographic_type = "Back";
 					} else if (value == "5") {
-						json.orthographic_type = "Left";  
+						json.orthographic_type = "Left";
 					} else if (value == "6") {
-						json.orthographic_type = "Right";  
-					} 
-				} else if (json && code == "110") { 
+						json.orthographic_type = "Right";
+					}
+				} else if (json && code == "110") {
 					json.origin = {x: parseFloat(value)};
-				} else if (json && code == "111") { 
+				} else if (json && code == "111") {
 					json.ucs_x = {x: parseFloat(value)};
-				} else if (json && code == "112") { 
+				} else if (json && code == "112") {
 					json.ucs_y = {x: parseFloat(value)};
-				} else if (json && code == "120") { 
+				} else if (json && code == "120") {
 					json.origin.y = parseFloat(value);
-				} else if (json && code == "121") { 
+				} else if (json && code == "121") {
 					json.ucs_x.y = parseFloat(value);
-				} else if (json && code == "122") { 
+				} else if (json && code == "122") {
 					json.ucs_y.y = parseFloat(value);
-				} else if (json && code == "130") { 
+				} else if (json && code == "130") {
 					json.origin.z = parseFloat(value);
-				} else if (json && code == "131") { 
+				} else if (json && code == "131") {
 					json.ucs_x.z = parseFloat(value);
-				} else if (json && code == "132") { 
+				} else if (json && code == "132") {
 					json.ucs_y.z = parseFloat(value);
-				} else if (json && code == "146") { 
+				} else if (json && code == "146") {
 					json.elevation = parseFloat(value);
-				} 
-			} else if (ttype == "VPORT") {					
+				}
+			} else if (ttype == "VPORT") {
 				if (code == "100" && value == "AcDbViewportTableRecord") {
 					if (json) this.tables.VPORT.push(json);
 					json = {};
@@ -480,9 +480,9 @@ const Entities = class {
 					json = null;
 				} else if (json && code == "2") {
 					json.name = value;
-				} else if (json && code == "10") { 
+				} else if (json && code == "10") {
 					json.lower_left_corner = {x : parseFloat(value)};
-				} else if (json && code == "11") { 
+				} else if (json && code == "11") {
 					json.upper_right_corner = {x : parseFloat(value)};
 				} else if (json && code == "12") {
 					json.center = {x: parseFloat(value)};
@@ -496,78 +496,78 @@ const Entities = class {
 					json.view_direction = {x: parseFloat(value)};
 				} else if (json && code == "17") {
 					json.target_point = {x: parseFloat(value)};
-				} else if (json && code == "20") { 
+				} else if (json && code == "20") {
 					json.lower_left_corner.y = parseFloat(value);
-				} else if (json && code == "21") { 
+				} else if (json && code == "21") {
 					json.upper_right_corner.y = parseFloat(value);
-				} else if (json && code == "22") { 
+				} else if (json && code == "22") {
 					json.center.y = parseFloat(value);
-				} else if (json && code == "23") { 
+				} else if (json && code == "23") {
 					json.snap_base_point.y = parseFloat(value);
-				} else if (json && code == "24") { 
+				} else if (json && code == "24") {
 					json.snap_spacing.y = parseFloat(value);
-				} else if (json && code == "25") { 
+				} else if (json && code == "25") {
 					json.grid_spacing.y = parseFloat(value);
-				} else if (json && code == "26") { 
+				} else if (json && code == "26") {
 					json.view_direction.y = parseFloat(value);
-				} else if (json && code == "27") { 
+				} else if (json && code == "27") {
 					json.target_point.y = parseFloat(value);
-				} else if (json && code == "36") { 
+				} else if (json && code == "36") {
 					json.view_direction.z = parseFloat(value);
-				} else if (json && code == "37") { 
+				} else if (json && code == "37") {
 					json.target_point.z = parseFloat(value);
-				} else if (json && code == "45") { 
+				} else if (json && code == "45") {
 					json.height = parseFloat(value);
-				} else if (json && code == "42") { 
+				} else if (json && code == "42") {
 					json.lens_length = parseFloat(value);
-				} else if (json && code == "50") { 
+				} else if (json && code == "50") {
 					json.snap_rotation_angle = parseFloat(value);
-				} else if (json && code == "51") { 
+				} else if (json && code == "51") {
 					json.twist_angle = parseFloat(value);
-				} else if (json && code == "72") {						
-					json.circle_sides = value; 
-				} else if (json && code == "79") {	
+				} else if (json && code == "72") {
+					json.circle_sides = value;
+				} else if (json && code == "79") {
 					if (value == "0") {
-						json.orthographic_type = "N/A";  
+						json.orthographic_type = "N/A";
 					} else if (value == "1") {
-						json.orthographic_type = "Top";  
+						json.orthographic_type = "Top";
 					} else if (value == "2") {
-						json.orthographic_type = "Bottom";  
+						json.orthographic_type = "Bottom";
 					} else if (value == "3") {
-						json.orthographic_type = "Front";  
+						json.orthographic_type = "Front";
 					} else if (value == "4") {
-						json.orthographic_type = "Back";  
+						json.orthographic_type = "Back";
 					} else if (value == "5") {
-						json.orthographic_type = "Left";  
+						json.orthographic_type = "Left";
 					} else if (value == "6") {
-						json.orthographic_type = "Right";  
-					} 
-				} else if (json && code == "110") { 
+						json.orthographic_type = "Right";
+					}
+				} else if (json && code == "110") {
 					json.origin = {x: parseFloat(value)};
-				} else if (json && code == "111") { 
+				} else if (json && code == "111") {
 					json.ucs_x = {x: parseFloat(value)};
-				} else if (json && code == "112") { 
+				} else if (json && code == "112") {
 					json.ucs_y = {x: parseFloat(value)};
-				} else if (json && code == "120") { 
+				} else if (json && code == "120") {
 					json.origin.y = parseFloat(value);
-				} else if (json && code == "121") { 
+				} else if (json && code == "121") {
 					json.ucs_x.y = parseFloat(value);
-				} else if (json && code == "122") { 
+				} else if (json && code == "122") {
 					json.ucs_y.y = parseFloat(value);
-				} else if (json && code == "130") { 
+				} else if (json && code == "130") {
 					json.origin.z = parseFloat(value);
-				} else if (json && code == "131") { 
+				} else if (json && code == "131") {
 					json.ucs_x.z = parseFloat(value);
-				} else if (json && code == "132") { 
+				} else if (json && code == "132") {
 					json.ucs_y.z = parseFloat(value);
-				} else if (json && code == "146") { 
+				} else if (json && code == "146") {
 					json.elevation = parseFloat(value);
 				}
-			} 
+			}
 			COUNT = COUNT + 2;
 		}
 	}
-	
+
 	getBlocks = (array, COUNT) => {
 		let json, json2, blockBegan = false, entityStarted = false;
 		while (COUNT < array.length - 1) {
@@ -581,12 +581,12 @@ const Entities = class {
 			} else if (code == "0" && value == "ENDBLK") {
 				if (json.entities && json2) json.entities.push(json2);
 				this.blocks.push(json);
-				blockBegan = false;				
+				blockBegan = false;
 			} else if (code == "100" && value == "AcDbBlockBegin") {
 				blockBegan = true;
 				entityStarted = false;
-			} 
-			
+			}
+
 			if (blockBegan && code == "0") {
 				if (!json.entities) json.entities = [];
 				json2 = {etype: value};
@@ -608,18 +608,18 @@ const Entities = class {
 			} else if (blockBegan && json2) {
 				this.insertEntity(code, value, json2);
 			}
-			
+
 			COUNT = COUNT + 2;
 		}
 	}
-	
+
 	getEntities = (array, COUNT) => {
 		let json, json2;
-		
+
 		while (COUNT < array.length - 1) {
 			const code = array[COUNT].trim();
-			const value = array[COUNT + 1].trim();	
-			if (code == "0" && value == "ENDSEC" && json.etype != "SEQEND") {	
+			const value = array[COUNT + 1].trim();
+			if (code == "0" && value == "ENDSEC" && json.etype != "SEQEND") {
 				/* if (json.subclass == "AcDbPolyline") {
 					const A = this.area(json);
 					const L = this.length(json);
@@ -629,10 +629,10 @@ const Entities = class {
 				this.entities.push(json);
 				return COUNT + 2;
 			}
-					
-			if (code == "0" && (!json || (json.subclass && json.subclass != "AcDb3dPolyline" && json.etype != "SEQEND"))) {					
+
+			if (code == "0" && (!json || (json.subclass && json.subclass != "AcDb3dPolyline" && json.etype != "SEQEND"))) {
 				if (json) {
-					/* if (json.subclass == "AcDbPolyline" && json.area === undefined) {						
+					/* if (json.subclass == "AcDbPolyline" && json.area === undefined) {
 						const A = this.area(json);
 						const L = this.length(json);
 						if (!isNaN(A.area)) json.area = A.area;
@@ -643,60 +643,60 @@ const Entities = class {
 				json = {};
 				this.insertEntity(code, value, json);
 			} else if (code == "0" && json && json.subclass == "AcDb3dPolyline" && value == "SEQEND") {
-				if (json2 && json.vertices) json.vertices.push(json2);	
+				if (json2 && json.vertices) json.vertices.push(json2);
 				if (json) this.entities.push(json);
 				json = {};
-				
+
 				json2 = undefined;
 				while (array[COUNT + 2].trim() != "0") {
 					COUNT = COUNT + 2;
-				}				
+				}
 				//this.insertEntity(code, value, json);
 			} else if (code == "0" && json && json.subclass == "AcDb3dPolyline") {
 				if (!json.vertices) json.vertices = [];
-				if (json2) json.vertices.push(json2);		
+				if (json2) json.vertices.push(json2);
 				json2 = {};
-				this.insertEntity(code, value, json2);				 
+				this.insertEntity(code, value, json2);
 			} else if (json2) {
 				this.insertEntity(code, value, json2);
 			} else {
 				this.insertEntity(code, value, json);
 			}
-			
+
 			COUNT = COUNT + 2;
 		}
 	}
-	
+
 	insertEntity = (code, value, json) => {
-		if (json && !json.etype && code == "0") {					
-			json.etype = value;			
+		if (json && !json.etype && code == "0") {
+			json.etype = value;
 			json.line_type = "ByLayer";
 			json.color = "ByLayer";
-		} else if (code == "1") {					
+		} else if (code == "1") {
 			if (json.subclass == "AcDbText" || json.subclass == "AcDbMText") {
 				const regex = /(\\P|\\L|\{|\}|\\*\\*a\d+;|\\H\d+\.?\d*x;|\+\/\-|%%u|\\Fromanc\||\\f.*p\d+;|t\d+;|c\d+;|\\fFutura Md BT\||\\Fsimplex\||\\fitalic.*c.*\d+;|scale.*\d+:\d+)/gim;
-				
+
 				json.text = value.replace(regex, "");
 				json.style = "STANDARD";
-				json.rotation = 0; 
+				json.rotation = 0;
 			} else if (json.subclass == "AcDbDimension") {
 				const regex = /(\\P|\\L|\{|\}|\\*\\*a\d+;|\\H\d+\.?\d*x;|\+\/\-|%%u|\\Fromanc\||\\f.*p\d+;|t\d+;|c\d+;|\\fFutura Md BT\||\\Fsimplex\||\\fitalic.*c.*\d+;|scale.*\d+:\d+)/gim;
-				json.text_override = value.replace(regex, "");  
+				json.text_override = value.replace(regex, "");
 			} else if (json.subclass == "AcDbModelerGeometry") {
 				if (!json.proprietary_data) json.proprietary_data = [];
 				json.proprietary_data.push(value);
-			} else if (json.subclass == "AcDbFcf") {				
+			} else if (json.subclass == "AcDbFcf") {
 				json.visual_representation = value;
-			} 
+			}
 		} else if (code == "2") {
 			if (json.subclass == "AcDbShape" || json.subclass == "AcDbMline" || json.subclass == "AcDbHatch") {
-				json.style_name = value;  
+				json.style_name = value;
 			} else if (json.subclass == "AcDbBlockReference") {
-				json.block_name = value;  
+				json.block_name = value;
 			}
 		} else if (code == "3") {
 			if (json.subclass == "AcDbDimension" || json.subclass == "AcDbLeader" || json.subclass == "AcDbFcf") {
-				json.dimension_style = value;  
+				json.dimension_style = value;
 			} else if (json.subclass == "AcDbModelerGeometry") {
 				const temp = json.proprietary_data[json.proprietary_data.length - 1];
 				json.proprietary_data[json.proprietary_data.length - 1] = temp + value;
@@ -705,7 +705,7 @@ const Entities = class {
 			json.line_type = value;
 		} else if (code == "7") {
 			if (json.subclass == "AcDbMText") {
-				json.style = value;  
+				json.style = value;
 			} if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
 					json.cells[json.cells.length - 1].text_style = value;
@@ -717,7 +717,7 @@ const Entities = class {
 			json.layer = value;
 		} else if (code == "10") {
 			if (json.subclass == "AcDbLine" || json.subclass == "AcDbRay" || json.subclass == "AcDbMline") {
-				json.start_x = parseFloat(value);  
+				json.start_x = parseFloat(value);
 			} else if (json.subclass == "AcDbPolyline" || json.subclass == "AcDbLeader") {
 				if (!json.vertices) json.vertices = [];
 				json.vertices.push({x: parseFloat(value)});
@@ -744,22 +744,22 @@ const Entities = class {
 				json.insertion_point.x = parseFloat(value);
 			} else {
 				json.x = parseFloat(value);
-			} 
+			}
 		} else if (code == "11") {
 			if (json.subclass == "AcDbLine") {
-				json.end_x = parseFloat(value);  
+				json.end_x = parseFloat(value);
 			} else if (json.subclass == "AcDbSpline") {
 				if (!json.fit_points) json.fit_points = [];
 				json.fit_points.push({x: parseFloat(value)});
 			} else if (json.subclass == "AcDbEllipse") {
-				json.major_end_dx = parseFloat(value);  
+				json.major_end_dx = parseFloat(value);
 			} else if (json.subclass == "AcDbDimension") {
-				json.x_text = parseFloat(value);  
+				json.x_text = parseFloat(value);
 			} else if (json.subclass == "AcDbTrace" || json.subclass == "AcDbFace") {
 				if (!json.corners) json.corners = [];
 				json.corners.push({x: parseFloat(value)});
 			} else if (json.subclass == "AcDbRay") {
-				json.unit_direction_x = parseFloat(value);  
+				json.unit_direction_x = parseFloat(value);
 			} else if (json.subclass == "AcDbHelix") {
 				if (!json.start_point) json.start_point = [];
 				json.start_point.push({x: parseFloat(value)});
@@ -783,13 +783,13 @@ const Entities = class {
 			} else if (json.subclass == "AcDbFcf") {
 				if (!json.x_axis_direction) json.x_axis_direction = {};
 				json.x_axis_direction.x = parseFloat(value);
-			} 
+			}
 		} else if (code == "12") {
 			if (json.subclass == "AcDbTrace" || json.subclass == "AcDbFace") {
 				if (!json.corners) json.corners = [];
 				json.corners.push({x: parseFloat(value)});
 			} else if (json.subclass == "AcDbMline") {
-				if (json.vertices && json.vertices.length > 0) { 
+				if (json.vertices && json.vertices.length > 0) {
 					for (let i = 0; i < json.vertices.length; i++) {
 						if (json.vertices[i].segment_dir_vector_x !== undefined) continue;
 						json.vertices[i].segment_dir_vector_x = parseFloat(value);
@@ -805,17 +805,17 @@ const Entities = class {
 			} else if (json.subclass == "AcDbSpline") {
 				if (!json.start_tangent) json.start_tangent = {};
 				json.start_tangent.x = parseFloat(value);
-			} 				
+			}
 		} else if (code == "13") {
 			if (json.specific_type == "AcDbAlignedDimension" || json.specific_type == "AcDb3PointAngularDimension") {
-				json.ext_line1_x = parseFloat(value);  
+				json.ext_line1_x = parseFloat(value);
 			} else if (json.specific_type == "AcDbOrdinateDimension") {
-				json.location_x = parseFloat(value);  
+				json.location_x = parseFloat(value);
 			} else if (json.subclass == "AcDbTrace" || json.subclass == "AcDbFace") {
 				if (!json.corners) json.corners = [];
 				json.corners.push({x: parseFloat(value)});
 			} else if (json.subclass == "AcDbMline") {
-				if (json.vertices && json.vertices.length > 0) { 
+				if (json.vertices && json.vertices.length > 0) {
 					for (let i = 0; i < json.vertices.length; i++) {
 						if (json.vertices[i].miter_dir_vector_x !== undefined) continue;
 						json.vertices[i].miter_dir_vector_x = parseFloat(value);
@@ -823,33 +823,33 @@ const Entities = class {
 					}
 				}
 			} else if (json.subclass == "AcDbRasterImage") {
-				json.u_value = parseFloat(value);  
+				json.u_value = parseFloat(value);
 			} else if (json.subclass == "AcDbSpline") {
 				if (!json.end_tangent) json.end_tangent = {};
 				json.end_tangent.x = parseFloat(value);
-			} 
+			}
 		} else if (code == "14") {
 			if (json.specific_type == "AcDbAlignedDimension" || json.specific_type == "AcDb3PointAngularDimension") {
-				json.ext_line2_x = parseFloat(value);  
+				json.ext_line2_x = parseFloat(value);
 			} else if (json.specific_type == "AcDbOrdinateDimension") {
-				json.leader_end_x = parseFloat(value);  
+				json.leader_end_x = parseFloat(value);
 			} else if (json.subclass == "AcDbRasterImage") {
 				if (!json.clip_vertex) json.clip_vertex = [];
 				json.clip_vertex.push({x: parseFloat(value)});
-			} 
+			}
 		} else if (code == "15") {
 			if (json.specific_type == "AcDb3PointAngularDimension") {
-				json.vertex_x = parseFloat(value);  
+				json.vertex_x = parseFloat(value);
 			} else if (json.specific_type == "AcDbRadialDimension" || json.specific_type == "AcDbDiametricDimension") {
-				json.dim_first_point_x = parseFloat(value);  
-			} 
+				json.dim_first_point_x = parseFloat(value);
+			}
 		} else if (code == "16") {
 			if (json.specific_type == "AcDb3PointAngularDimension") {
-				json.arc_dim_line_x = parseFloat(value); 
-			} 
+				json.arc_dim_line_x = parseFloat(value);
+			}
 		} else if (code == "20") {
 			if (json.subclass == "AcDbLine" || json.subclass == "AcDbRay" || json.subclass == "AcDbMline") {
-				json.start_y = parseFloat(value);  
+				json.start_y = parseFloat(value);
 			} else if (json.subclass == "AcDbPolyline" || json.subclass == "AcDbLeader") {
 				json.vertices[json.vertices.length - 1]["y"] = parseFloat(value);
 			} else if (json.subclass == "AcDbSpline") {
@@ -866,26 +866,26 @@ const Entities = class {
 				json.insertion_point[json.insertion_point.length - 1]["y"] = parseFloat(value);
 			} else if (json.subclass == "AcDbXline") {
 				json.first_point.y = parseFloat(value);
-			} else if (json.subclass == "AcDbFcf") {				
+			} else if (json.subclass == "AcDbFcf") {
 				json.insertion_point.y = parseFloat(value);
 			} else {
 				json.y = parseFloat(value);
-			} 
+			}
 		} else if (code == "21") {
 			if (json.subclass == "AcDbLine") {
-				json.end_y = parseFloat(value);  
+				json.end_y = parseFloat(value);
 			} else if (json.subclass == "AcDbSpline") {
 				json.fit_points[json.fit_points.length - 1]["y"] = parseFloat(value);
 			} else if (json.subclass == "AcDbEllipse") {
-				json.major_end_dy = parseFloat(value);  
+				json.major_end_dy = parseFloat(value);
 			} else if (json.subclass == "AcDbDimension") {
-				json.y_text = parseFloat(value);  
+				json.y_text = parseFloat(value);
 			} else if (json.subclass == "AcDbTrace" || json.subclass == "AcDbFace") {
 				if (json.corners && json.corners[1]) {
 					json.corners[1]["y"] = parseFloat(value);
 				}
 			} else if (json.subclass == "AcDbRay") {
-				json.unit_direction_y = parseFloat(value);  
+				json.unit_direction_y = parseFloat(value);
 			} else if (json.subclass == "AcDbHelix") {
 				json.start_point[json.start_point.length - 1]["y"] = parseFloat(value);
 			} else if (json.subclass == "AcDbMline") {
@@ -904,14 +904,14 @@ const Entities = class {
 				json.direction_vector["y"] = parseFloat(value);
 			} else if (json.subclass == "AcDbFcf") {
 				json.x_axis_direction.y = parseFloat(value);
-			} 
+			}
 		} else if (code == "22") {
 			if (json.subclass == "AcDbTrace" || json.subclass == "AcDbFace") {
 				if (json.corners && json.corners[2]) {
 					json.corners[2]["y"] = parseFloat(value);
 				}
 			} else if (json.subclass == "AcDbMline") {
-				if (json.vertices && json.vertices.length > 0) { 
+				if (json.vertices && json.vertices.length > 0) {
 					for (let i = 0; i < json.vertices.length; i++) {
 						if (json.vertices[i].segment_dir_vector_y !== undefined) continue;
 						json.vertices[i].segment_dir_vector_y = parseFloat(value);
@@ -925,18 +925,18 @@ const Entities = class {
 			} else if (json.subclass == "AcDbSpline") {
 				if (!json.start_tangent) json.start_tangent = {};
 				json.start_tangent.y = parseFloat(value);
-			}  
+			}
 		} else if (code == "23") {
 			if (json.specific_type == "AcDbAlignedDimension" || json.specific_type == "AcDb3PointAngularDimension") {
-				json.ext_line1_y = parseFloat(value);  
+				json.ext_line1_y = parseFloat(value);
 			} else if (json.specific_type == "AcDbOrdinateDimension") {
-				json.location_y = parseFloat(value);  
+				json.location_y = parseFloat(value);
 			} else if (json.subclass == "AcDbTrace" || json.subclass == "AcDbFace") {
 				if (json.corners && json.corners[3]) {
 					json.corners[3]["y"] = parseFloat(value);
 				}
 			} else if (json.subclass == "AcDbMline") {
-				if (json.vertices && json.vertices.length > 0) { 
+				if (json.vertices && json.vertices.length > 0) {
 					for (let i = 0; i < json.vertices.length; i++) {
 						if (json.vertices[i].miter_dir_vector_y !== undefined) continue;
 						json.vertices[i].miter_dir_vector_y = parseFloat(value);
@@ -944,32 +944,32 @@ const Entities = class {
 					}
 				}
 			} else if (json.subclass == "AcDbRasterImage") {
-				json.v_value = parseFloat(value);  
+				json.v_value = parseFloat(value);
 			} else if (json.subclass == "AcDbSpline") {
 				if (!json.end_tangent) json.end_tangent = {};
 				json.end_tangent.y = parseFloat(value);
-			} 
+			}
 		} else if (code == "24") {
 			if (json.specific_type == "AcDbAlignedDimension" || json.specific_type == "AcDb3PointAngularDimension") {
-				json.ext_line2_y = parseFloat(value);  
+				json.ext_line2_y = parseFloat(value);
 			} else if (json.specific_type == "AcDbOrdinateDimension") {
-				json.leader_end_y = parseFloat(value);  
+				json.leader_end_y = parseFloat(value);
 			} else if (json.subclass == "AcDbRasterImage") {
-				json.clip_vertex[json.clip_vertex.length - 1]["y"] = parseFloat(value); 
-			} 
+				json.clip_vertex[json.clip_vertex.length - 1]["y"] = parseFloat(value);
+			}
 		} else if (code == "25") {
 			if (json.specific_type == "AcDb3PointAngularDimension") {
-				json.vertex_y = parseFloat(value);  
+				json.vertex_y = parseFloat(value);
 			} else if (json.specific_type == "AcDbRadialDimension" || json.specific_type == "AcDbDiametricDimension") {
-				json.dim_first_point_y = parseFloat(value);  
-			} 
+				json.dim_first_point_y = parseFloat(value);
+			}
 		} else if (code == "26") {
 			if (json.specific_type == "AcDb3PointAngularDimension") {
-				json.arc_dim_line_y = parseFloat(value);   
-			}  
+				json.arc_dim_line_y = parseFloat(value);
+			}
 		} else if (code == "30") {
 			if (json.subclass == "AcDbLine" || json.subclass == "AcDbRay" || json.subclass == "AcDbMline") {
-				json.start_z = parseFloat(value);  
+				json.start_z = parseFloat(value);
 			} else if (json.subclass == "AcDbPolyline" || json.subclass == "AcDbLeader") {
 				json.vertices[json.vertices.length - 1]["z"] = parseFloat(value);
 			} else if (json.subclass == "AcDbSpline") {
@@ -986,11 +986,11 @@ const Entities = class {
 				json.insertion_point[json.insertion_point.length - 1]["z"] = parseFloat(value);
 			} else if (json.subclass == "AcDbXline") {
 				json.first_point.z = parseFloat(value);
-			} else if (json.subclass == "AcDbFcf") {				
+			} else if (json.subclass == "AcDbFcf") {
 				json.insertion_point.z = parseFloat(value);
 			} else {
 				json.z = parseFloat(value);
-			} 
+			}
 		} else if (code == "31") {
 			if (json.subclass == "AcDbLine") {
 				json.end_z = parseFloat(value);
@@ -998,15 +998,15 @@ const Entities = class {
 			} else if (json.subclass == "AcDbSpline") {
 				json.fit_points[json.fit_points.length - 1]["z"] = parseFloat(value);
 			} else if (json.subclass == "AcDbEllipse") {
-				json.major_end_dz = parseFloat(value);  
+				json.major_end_dz = parseFloat(value);
 			} else if (json.subclass == "AcDbDimension") {
-				json.z_text = parseFloat(value);  
+				json.z_text = parseFloat(value);
 			} else if (json.subclass == "AcDbTrace" || json.subclass == "AcDbFace") {
 				if (json.corners && json.corners[1]) {
 					json.corners[1]["z"] = parseFloat(value);
 				}
 			} else if (json.subclass == "AcDbRay") {
-				json.unit_direction_z = parseFloat(value);  
+				json.unit_direction_z = parseFloat(value);
 			} else if (json.subclass == "AcDbHelix") {
 				json.start_point[json.start_point.length - 1]["z"] = parseFloat(value);
 			} else if (json.subclass == "AcDbMline") {
@@ -1025,14 +1025,14 @@ const Entities = class {
 				json.direction_vector["z"] = parseFloat(value);
 			} else if (json.subclass == "AcDbFcf") {
 				json.x_axis_direction.z = parseFloat(value);
-			} 
+			}
 		} else if (code == "32") {
 			if (json.subclass == "AcDbTrace" || json.subclass == "AcDbFace") {
 				if (json.corners && json.corners[2]) {
 					json.corners[2]["z"] = parseFloat(value);
 				}
 			} else if (json.subclass == "AcDbMline") {
-				if (json.vertices && json.vertices.length > 0) { 
+				if (json.vertices && json.vertices.length > 0) {
 					for (let i = 0; i < json.vertices.length; i++) {
 						if (json.vertices[i].segment_dir_vector_z !== undefined) continue;
 						json.vertices[i].segment_dir_vector_z = parseFloat(value);
@@ -1046,18 +1046,18 @@ const Entities = class {
 			} else if (json.subclass == "AcDbSpline") {
 				if (!json.start_tangent) json.start_tangent = {};
 				json.start_tangent.z = parseFloat(value);
-			} 
+			}
 		} else if (code == "33") {
 			if (json.specific_type == "AcDbAlignedDimension" || json.specific_type == "AcDb3PointAngularDimension") {
-				json.ext_line1_z = parseFloat(value);  
+				json.ext_line1_z = parseFloat(value);
 			} else if (json.specific_type == "AcDbOrdinateDimension") {
-				json.location_z = parseFloat(value);  
+				json.location_z = parseFloat(value);
 			} else if (json.subclass == "AcDbTrace" || json.subclass == "AcDbFace") {
 				if (json.corners && json.corners[3]) {
 					json.corners[3]["z"] = parseFloat(value);
 				}
 			} else if (json.subclass == "AcDbMline") {
-				if (json.vertices && json.vertices.length > 0) { 
+				if (json.vertices && json.vertices.length > 0) {
 					for (let i = 0; i < json.vertices.length; i++) {
 						if (json.vertices[i].miter_dir_vector_z !== undefined) continue;
 						json.vertices[i].miter_dir_vector_z = parseFloat(value);
@@ -1067,21 +1067,21 @@ const Entities = class {
 			} else if (json.subclass == "AcDbSpline") {
 				if (!json.end_tangent) json.end_tangent = {};
 				json.end_tangent.z = parseFloat(value);
-			} 
+			}
 		} else if (code == "34") {
 			if (json.specific_type == "AcDbAlignedDimension" || json.specific_type == "AcDb3PointAngularDimension") {
-				json.ext_line2_z = parseFloat(value);  
+				json.ext_line2_z = parseFloat(value);
 			} else if (json.specific_type == "AcDbOrdinateDimension") {
-				json.leader_end_z = parseFloat(value);  
+				json.leader_end_z = parseFloat(value);
 			} else if (json.subclass == "AcDbRasterImage") {
-				json.clip_vertex[json.clip_vertex.length - 1]["z"] = parseFloat(value); 
-			} 
+				json.clip_vertex[json.clip_vertex.length - 1]["z"] = parseFloat(value);
+			}
 		} else if (code == "35") {
 			if (json.specific_type == "AcDb3PointAngularDimension") {
-				json.vertex_z = parseFloat(value);  
+				json.vertex_z = parseFloat(value);
 			} else if (json.specific_type == "AcDbRadialDimension" || json.specific_type == "AcDbDiametricDimension") {
-				json.dim_first_point_z = parseFloat(value);  
-			} 
+				json.dim_first_point_z = parseFloat(value);
+			}
 		} else if (code == "36") {
 			if (json.specific_type == "AcDb3PointAngularDimension") {
 				json.ext_line1_p1_x = json.ext_line1_x;
@@ -1092,13 +1092,13 @@ const Entities = class {
 				json.ext_line1_p2_y = json.ext_line2_y;
 				json.ext_line2_p1_y = json.y;
 				json.ext_line2_p2_y = json.vertex_y;
-				
+
 				json.ext_line1_p1_z = json.ext_line1_z;
 				json.ext_line1_p2_z = json.ext_line2_z;
 				json.ext_line2_p1_z = json.z;
 				json.ext_line2_p2_z = json.vertex_z;
-				
-				json.arc_dim_line_z = parseFloat(value);  
+
+				json.arc_dim_line_z = parseFloat(value);
 				delete json.ext_line1_x;
 				delete json.ext_line2_x;
 				delete json.x;
@@ -1106,13 +1106,13 @@ const Entities = class {
 				delete json.ext_line1_y;
 				delete json.ext_line2_y;
 				delete json.y;
-				delete json.vertex_y; 
-				
+				delete json.vertex_y;
+
 				delete json.ext_line1_z;
 				delete json.ext_line2_z;
 				delete json.z;
-				delete json.vertex_z; 
-			}  
+				delete json.vertex_z;
+			}
 		} else if (code == "40") {
 			if (json.subclass == "AcDbCircle") {
 				json.radius = parseFloat(value);
@@ -1121,26 +1121,26 @@ const Entities = class {
 				json.area = A.area;
 				json.circumference = C;
 			} else if (json.subclass == "AcDbEllipse") {
-				json.minorToMajor = parseFloat(value);  
+				json.minorToMajor = parseFloat(value);
 			} else if (json.subclass == "AcDbSpline") {
 				if (!json.knot_values) json.knot_values = [];
 				json.knot_values.push(parseFloat(value));
 			} else if (json.subclass == "AcDbText" || json.subclass == "AcDbMText") {
-				json.height = parseFloat(value);  
+				json.height = parseFloat(value);
 			} else if (json.subclass == "AcDbVertex") {
-				json.start_width = parseFloat(value);  
+				json.start_width = parseFloat(value);
 			} else if (json.subclass == "AcDbShape") {
-				json.size = parseFloat(value);  
+				json.size = parseFloat(value);
 			} else if (json.subclass == "AcDbMline") {
-				json.scale_factor = parseFloat(value);  
+				json.scale_factor = parseFloat(value);
 			} else if (json.subclass == "AcDbDimension") {
-				json.leader_length = parseFloat(value);  
+				json.leader_length = parseFloat(value);
 			} else if (json.subclass == "AcDbHelix") {
-				json.radius = parseFloat(value);  
+				json.radius = parseFloat(value);
 			} else if (json.subclass == "AcDbLeader") {
-				json.text_height = parseFloat(value);  
+				json.text_height = parseFloat(value);
 			} else if (json.subclass == "AcDbPolyline") {
-				json.vertices[json.vertices.length - 1]["start_width"] = parseFloat(value);  
+				json.vertices[json.vertices.length - 1]["start_width"] = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && json.specific_type == "AcDbRevolvedSurface") {
 				json.revolve_angle = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && json.specific_type == "AcDbExtrudedSurface") {
@@ -1153,7 +1153,7 @@ const Entities = class {
 				if (!json.transform_matrix_sweep2) json.transform_matrix_sweep2 = [];
 				json.transform_matrix_sweep2.push(parseFloat(value));
 			} else if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
-				json.horizontal_margin = parseFloat(value); 
+				json.horizontal_margin = parseFloat(value);
 			}
 		} else if (code == "41") {
 			if (json.subclass == "AcDbEllipse") {
@@ -1162,9 +1162,9 @@ const Entities = class {
 					this.getEllipseAngles(json);
 				}
 			} else if (json.subclass == "AcDbText") {
-				json.width = parseFloat(value);  
+				json.width = parseFloat(value);
 			} else if (json.subclass == "AcDbVertex") {
-				json.end_width = parseFloat(value);  
+				json.end_width = parseFloat(value);
 			} else if (json.subclass == "AcDbMline") {
 				if (json.vertices && json.vertices.length > 0) {
 					if (!json.vertices[json.vertices.length - 1].parameters) {
@@ -1176,15 +1176,15 @@ const Entities = class {
 				if (!json.weights) json.weights = [];
 				json.weights.push(parseFloat(value));
 			} else if (json.subclass == "AcDbHatch") {
-				json.pattern_scale = parseFloat(value);  
+				json.pattern_scale = parseFloat(value);
 			} else if (json.subclass == "AcDbBlockReference") {
-				json.scale_x = parseFloat(value);  
+				json.scale_x = parseFloat(value);
 			} else if (json.subclass == "AcDbHelix") {
-				json.number_of_turns = parseFloat(value);  
+				json.number_of_turns = parseFloat(value);
 			} else if (json.subclass == "AcDbLeader") {
-				json.text_width = parseFloat(value);  
+				json.text_width = parseFloat(value);
 			} else if (json.subclass == "AcDbPolyline") {
-				json.vertices[json.vertices.length - 1]["end_width"] = parseFloat(value);  
+				json.vertices[json.vertices.length - 1]["end_width"] = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && json.specific_type == "AcDbRevolvedSurface") {
 				json.start_angle = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && json.specific_type == "AcDbLoftedSurface") {
@@ -1193,7 +1193,7 @@ const Entities = class {
 				if (!json.transform_matrix_path2) json.transform_matrix_path2 = [];
 				json.transform_matrix_path2.push(parseFloat(value));
 			} else if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
-				json.vertical_margin = parseFloat(value); 
+				json.vertical_margin = parseFloat(value);
 			}
 		} else if (code == "42") {
 			if (json.subclass == "AcDbEllipse") {
@@ -1202,18 +1202,18 @@ const Entities = class {
 					this.getEllipseAngles(json);
 				}
 			} else if (json.subclass == "AcDbText") {
-				json.character_width = parseFloat(value);  
+				json.character_width = parseFloat(value);
 			} else if (json.subclass == "AcDbDimension") {
 				json.actual_measurement = parseFloat(value);
 				if (json.text_override == "<>") {
 					json.text_override = value;
 				}
 			} else if (json.subclass == "AcDbBlockReference") {
-				json.scale_y = parseFloat(value);  
+				json.scale_y = parseFloat(value);
 			} else if (json.subclass == "AcDbHelix") {
-				json.turn_height = parseFloat(value);  
+				json.turn_height = parseFloat(value);
 			} else if (json.subclass == "AcDbPolyline") {
-				json.vertices[json.vertices.length - 1]["bulge"] = parseFloat(value);  
+				json.vertices[json.vertices.length - 1]["bulge"] = parseFloat(value);
 			} else if (json.subclass == "AcDbMline") {
 				if (json.vertices && json.vertices.length > 0) {
 					if (!json.vertices[json.vertices.length - 1].area_fill_parameters) {
@@ -1228,67 +1228,67 @@ const Entities = class {
 				json.draft_angle = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && json.specific_type == "AcDbLoftedSurface") {
 				json.end_draft_angle = parseFloat(value);
-			} 
+			}
 		} else if (code == "43") {
 			if (json.subclass == "AcDbBlockReference") {
-				json.scale_z = parseFloat(value);  
+				json.scale_z = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && json.specific_type == "AcDbRevolvedSurface") {
 				json.draft_angle = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && (json.specific_type == "AcDbExtrudedSurface" || json.specific_type == "AcDbSweptSurface")) {
 				json.start_draft_distance = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && json.specific_type == "AcDbLoftedSurface") {
 				json.start_draft_magnitude = parseFloat(value);
-			} 
+			}
 		} else if (code == "44") {
 			if (json.subclass == "AcDbBlockReference") {
-				json.column_spacing = parseFloat(value);  
+				json.column_spacing = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && json.specific_type == "AcDbRevolvedSurface") {
 				json.start_draft_distance = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && (json.specific_type == "AcDbExtrudedSurface" || json.specific_type == "AcDbSweptSurface")) {
 				json.end_draft_distance = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && json.specific_type == "AcDbLoftedSurface") {
 				json.end_draft_magnitude = parseFloat(value);
-			} 
+			}
 		} else if (code == "45") {
 			if (json.subclass == "AcDbBlockReference") {
-				json.row_spacing = parseFloat(value);  
+				json.row_spacing = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && json.specific_type == "AcDbRevolvedSurface") {
 				json.end_draft_distance = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && (json.specific_type == "AcDbExtrudedSurface" || json.specific_type == "AcDbSweptSurface")) {
 				json.twist_angle = parseFloat(value);
-			} 
+			}
 		} else if (code == "46") {
 			if (json.subclass == "AcDbModelerGeometry" && json.specific_type == "AcDbRevolvedSurface") {
 				json.twist_angle = parseFloat(value);
 			} else if (json.subclass == "AcDbModelerGeometry" && (json.specific_type == "AcDbExtrudedSurface" || json.specific_type == "AcDbSweptSurface")) {
 				if (!json.transform_matrix_sweep) json.transform_matrix_sweep = [];
 				json.transform_matrix_sweep.push(parseFloat(value));
-			} 
+			}
 		} else if (code == "47") {
 			if (json.subclass == "AcDbModelerGeometry" && (json.specific_type == "AcDbExtrudedSurface" || json.specific_type == "AcDbSweptSurface")) {
 				if (!json.transform_matrix_path) json.transform_matrix_path = [];
 				json.transform_matrix_path.push(parseFloat(value));
-			} 
+			}
 		} else if (code == "48") {
 			json.line_scale = parseFloat(value);
 		} else if (code == "49") {
 			if (json.subclass == "AcDbModelerGeometry" && (json.specific_type == "AcDbExtrudedSurface" || json.specific_type == "AcDbSweptSurface")) {
 				json.align_angle = parseFloat(value);
-			} 
+			}
 		} else if (code == "50") {
 			if (json.subclass == "AcDbCircle") {
-				json.start_angle = parseFloat(value);   
+				json.start_angle = parseFloat(value);
 			} else if (json.subclass == "AcDbDimension") {
-				json.rotation = parseFloat(value);   
+				json.rotation = parseFloat(value);
 			} else if (json.subclass == "AcDbVertex") {
-				json.curve_fit_tangent_direction = value;   
+				json.curve_fit_tangent_direction = value;
 			} else if (json.subclass == "AcDbShape") {
-				json.rotation = parseFloat(value);   
+				json.rotation = parseFloat(value);
 			} else if (json.subclass == "AcDbText" || json.subclass == "AcDbMText") {
-				json.rotation = parseFloat(value);   
+				json.rotation = parseFloat(value);
 			} else if (json.subclass == "AcDbBlockReference") {
-				json.rotation = parseFloat(value);  
-			} 				 
+				json.rotation = parseFloat(value);
+			}
 		} else if (code == "51") {
 			if (json.subclass == "AcDbCircle") {
 				json.end_angle = parseFloat(value);
@@ -1297,27 +1297,27 @@ const Entities = class {
 				delete json.circumference;
 				json.area = A.area;
 				json.arc_length = C;
-			} 					  
+			}
 		} else if (code == "52") {
 			if (json.subclass == "AcDbHatch") {
-				json.pattern_angle = parseFloat(value);  
+				json.pattern_angle = parseFloat(value);
 			} else if (json.subclass == "AcDbDimension") {
-				json.ext_line_rotation = parseFloat(value);  
-			} 					  
+				json.ext_line_rotation = parseFloat(value);
+			}
 		} else if (code == "60") {
 			if (value == "1") {
-				json.visibility = "Invisible";  
-			} 					  
+				json.visibility = "Invisible";
+			}
 		} else if (code == "62") {
 			if (value == "0") {
-				json.color = "ByBlock";  
+				json.color = "ByBlock";
 			} else if (value == "256") {
-				json.color = "ByLayer";  
+				json.color = "ByLayer";
 			} else if (parseInt(value) > 0 && parseInt(value) < 256) {
-				json.color = parseInt(value);  
+				json.color = parseInt(value);
 			} else if (parseInt(value) < 0) {
-				json.color = "Layer turned-off";  
-			} 		
+				json.color = "Layer turned-off";
+			}
 		} else if (code == "63") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
@@ -1325,7 +1325,7 @@ const Entities = class {
 				} else {
 					json.fill_color = value;
 				}
-			}			
+			}
 		} else if (code == "64") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
@@ -1333,7 +1333,7 @@ const Entities = class {
 				} else {
 					json.text_color = value;
 				}
-			}			
+			}
 		} else if (code == "65") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
@@ -1341,7 +1341,7 @@ const Entities = class {
 				} else {
 					json.border_color_right = value;
 				}
-			}			
+			}
 		} else if (code == "66") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
@@ -1349,7 +1349,7 @@ const Entities = class {
 				} else {
 					json.border_color_bottom = value;
 				}
-			}			
+			}
 		} else if (code == "68") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
@@ -1357,7 +1357,7 @@ const Entities = class {
 				} else {
 					json.border_color_left = value;
 				}
-			}			
+			}
 		} else if (code == "69") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
@@ -1365,165 +1365,165 @@ const Entities = class {
 				} else {
 					json.border_color_top = value;
 				}
-			}			
+			}
 		} else if (code == "70") {
 			if (json.subclass == "AcDbPolyline") {
-				if (value == "1") {
-					json.type = "Closed";  
+				if (value == "1" || value == "129") {
+					json.type = "Closed";
 				} else if (value == "128") {
-					json.type = "Plinegen";  
-				} 
+					json.type = "Plinegen";
+				}
 			} else if (json.subclass == "AcDbSpline") {
 				if (value == "1") {
-					json.type = "Closed";  
+					json.type = "Closed";
 				} else if (value == "2") {
-					json.type = "Periodic";  
+					json.type = "Periodic";
 				} else if (value == "4") {
-					json.type = "Rational";  
+					json.type = "Rational";
 				} else if (value == "8") {
-					json.type = "Planar";  
+					json.type = "Planar";
 				} else if (value == "16") {
-					json.type = "Linear";  
-				} 
+					json.type = "Linear";
+				}
 			} else if (json.subclass == "AcDbDimension") {
 				if (value == "0") {
-					json.type = "Rotated, horizontal, or vertical";  
+					json.type = "Rotated, horizontal, or vertical";
 				} else if (value == "1") {
-					json.type = "Aligned";  
+					json.type = "Aligned";
 				} else if (value == "2") {
-					json.type = "Angular";  
+					json.type = "Angular";
 				} else if (value == "3") {
-					json.type = "Diameter";  
+					json.type = "Diameter";
 				} else if (value == "4") {
-					json.type = "Radius";  
+					json.type = "Radius";
 				} else if (value == "5") {
-					json.type = "Angular 3 point";  
+					json.type = "Angular 3 point";
 				} else if (value == "6") {
-					json.type = "Ordinate";  
+					json.type = "Ordinate";
 				} else if (value == "64") {
-					json.ordinate = "X-Type";  
+					json.ordinate = "X-Type";
 				}
 			} else if (json.subclass == "AcDbVertex") {
 				if (value == "1") {
-					json.type = "Extra vertex created by curve-fitting";  
+					json.type = "Extra vertex created by curve-fitting";
 				} else if (value == "2") {
-					json.type = "Curve-fit tangent defined for this vertex";  
+					json.type = "Curve-fit tangent defined for this vertex";
 				} else if (value == "4") {
-					json.type = "Not used";  
+					json.type = "Not used";
 				} else if (value == "8") {
-					json.type = "Spline vertex created by spline-fitting";  
+					json.type = "Spline vertex created by spline-fitting";
 				} else if (value == "16") {
-					json.type = "Spline frame control point";  
+					json.type = "Spline frame control point";
 				} else if (value == "32") {
-					json.type = "3D polyline vertex";  
+					json.type = "3D polyline vertex";
 				} else if (value == "64") {
-					json.type = "3D polygon mesh";  
+					json.type = "3D polygon mesh";
 				} else if (value == "128") {
-					json.type = "Polyface mesh vertex";  
+					json.type = "Polyface mesh vertex";
 				}
 			} else if (json.subclass == "AcDbMline") {
 				if (value == "0") {
-					json.justification = "Top";  
+					json.justification = "Top";
 				} else if (value == "1") {
-					json.justification = "Middle";  
+					json.justification = "Middle";
 				} else if (value == "2") {
-					json.justification = "Bottom";  
-				} 
+					json.justification = "Bottom";
+				}
 			} else if (json.subclass == "AcDbHatch") {
 				if (value == "0") {
-					json.fill_type = "Pattern";  
+					json.fill_type = "Pattern";
 				} else if (value == "1") {
-					json.fill_type = "Solid";  
-				} 
+					json.fill_type = "Solid";
+				}
 			} else if (json.subclass == "AcDbBlockReference") {
-				json.column_count = parseFloat(value);  
+				json.column_count = parseFloat(value);
 			} else if (json.subclass == "AcDbRasterImage") {
 				if (value == "1") {
-					json.image_display_properties = "Show image";  
+					json.image_display_properties = "Show image";
 				} else if (value == "2") {
-					json.image_display_properties = "Show image when not aligned with screen";  
+					json.image_display_properties = "Show image when not aligned with screen";
 				} else if (value == "4") {
-					json.image_display_properties = "Use clipping boundary";  
+					json.image_display_properties = "Use clipping boundary";
 				} else if (value == "8") {
-					json.image_display_properties = "Transparency is on";  
+					json.image_display_properties = "Transparency is on";
 				}
 			} else if (json.subclass == "AcDbFace") {
 				if (value == "1") {
-					json.invisible_edge = "First";  
+					json.invisible_edge = "First";
 				} else if (value == "2") {
-					json.invisible_edge = "Second";  
+					json.invisible_edge = "Second";
 				} else if (value == "4") {
-					json.invisible_edge = "Third";  
+					json.invisible_edge = "Third";
 				} else if (value == "8") {
-					json.invisible_edge = "Fourth";  
+					json.invisible_edge = "Fourth";
 				}
 			} else if (json.subclass == "AcDbModelerGeometry" && (json.specific_type == "AcDbExtrudedSurface" || json.specific_type == "AcDbSweptSurface")) {
 				if (value == "0") {
-					json.sweep_alignment_option = "No alignment";  
+					json.sweep_alignment_option = "No alignment";
 				} else if (value == "1") {
-					json.sweep_alignment_option = "Align sweep entity to path";  
+					json.sweep_alignment_option = "Align sweep entity to path";
 				} else if (value == "2") {
-					json.sweep_alignment_option = "Translate sweep entity to path";  
+					json.sweep_alignment_option = "Translate sweep entity to path";
 				} else if (value == "3") {
-					json.sweep_alignment_option = "Translate path to sweep entity";  
-				} 
-			} 
+					json.sweep_alignment_option = "Translate path to sweep entity";
+				}
+			}
 		} else if (code == "71") {
 			if (json.subclass == "AcDbSpline") {
 				json.degree_of_curve = parseFloat(value);
 			} else if (json.subclass == "AcDbDimension") {
 				if (value == "1") {
-					json.attachement_point = "Top left";  
+					json.attachement_point = "Top left";
 				} else if (value == "2") {
-					json.attachement_point = "Top center";  
+					json.attachement_point = "Top center";
 				} else if (value == "3") {
-					json.attachement_point = "Top right";  
+					json.attachement_point = "Top right";
 				} else if (value == "4") {
-					json.attachement_point = "Middle left";  
+					json.attachement_point = "Middle left";
 				} else if (value == "5") {
-					json.attachement_point = "Middle center";  
+					json.attachement_point = "Middle center";
 				} else if (value == "6") {
-					json.attachement_point = "Middle right";  
+					json.attachement_point = "Middle right";
 				} else if (value == "7") {
-					json.attachement_point = "Bottom left";  
+					json.attachement_point = "Bottom left";
 				} else if (value == "8") {
-					json.attachement_point = "Bottom center";  
+					json.attachement_point = "Bottom center";
 				} else if (value == "9") {
-					json.attachement_point = "Bottom right";  
-				} 
+					json.attachement_point = "Bottom right";
+				}
 			} else if (json.subclass == "AcDbMline") {
 				if (value == "1") {
-					json.type = "Has at least one vertex";  
+					json.type = "Has at least one vertex";
 				} else if (value == "2") {
-					json.type = "Closed";  
+					json.type = "Closed";
 				} else if (value == "4") {
-					json.type = "Suppress start caps";  
+					json.type = "Suppress start caps";
 				} else if (value == "8") {
-					json.type = "Suppress end caps";  
-				}  
+					json.type = "Suppress end caps";
+				}
 			} else if (json.subclass == "AcDbHatch") {
 				if (value == "0") {
-					json.associative = false;  
+					json.associative = false;
 				} else if (value == "1") {
-					json.associative = true;  
-				} 
+					json.associative = true;
+				}
 			} else if (json.subclass == "AcDbBlockReference") {
-				json.row_count = parseFloat(value);  
+				json.row_count = parseFloat(value);
 			} else if (json.subclass == "AcDbLeader") {
 				if (value == "0") {
-					json.arrow_head_disabled = "Yes";  
+					json.arrow_head_disabled = "Yes";
 				} else if (value == "1") {
-					json.arrow_head_disabled = "No";  
-				} 
+					json.arrow_head_disabled = "No";
+				}
 			} else if (json.subclass == "AcDbRasterImage") {
 				if (value == "1") {
-					json.clip_boundary_type = "Rectangular";  
+					json.clip_boundary_type = "Rectangular";
 				} else if (value == "2") {
-					json.clip_boundary_type = "Polygonal";  
-				} 
+					json.clip_boundary_type = "Polygonal";
+				}
 			} else if (json.subclass == "AcDbModelerGeometry" && json.specific_type == "AcDbRevolvedSurface") {
 				json.n_u_isolines = parseFloat(value);
-			} 
+			}
 		} else if (code == "72") {
 			if (json.subclass == "AcDbSpline") {
 				json.number_of_knots = parseFloat(value);
@@ -1531,18 +1531,18 @@ const Entities = class {
 				json.number_of_vertices = parseFloat(value);
 			} else if (json.subclass == "AcDbMText") {
 				if (value == "1") {
-					json.drawing_direction = "Left to Right";  
+					json.drawing_direction = "Left to Right";
 				} else if (value == "3") {
-					json.drawing_direction = "Top to Bottom";  
+					json.drawing_direction = "Top to Bottom";
 				} else if (value == "5") {
-					json.drawing_direction = "Inherited from text style";  
-				} 
+					json.drawing_direction = "Inherited from text style";
+				}
 			} else if (json.subclass == "AcDbLeader") {
 				if (value == "0") {
-					json.path_type = "Straight line";  
+					json.path_type = "Straight line";
 				} else if (value == "1") {
-					json.path_type = "Spline";  
-				} 
+					json.path_type = "Spline";
+				}
 			} else if (json.subclass == "AcDbModelerGeometry" && json.specific_type == "AcDbRevolvedSurface") {
 				json.n_v_isolines = parseFloat(value);
 			}
@@ -1551,73 +1551,73 @@ const Entities = class {
 				json.number_of_control_points = parseFloat(value);
 			} else if (json.subclass == "AcDbLeader") {
 				if (value == "0") {
-					json.created = "with text annotation";  
+					json.created = "with text annotation";
 				} else if (value == "1") {
-					json.created = "with tolerance annotation";  
+					json.created = "with tolerance annotation";
 				} else if (value == "2") {
-					json.created = "with block reference annotation";  
+					json.created = "with block reference annotation";
 				} else if (value == "3") {
-					json.created = "without any annotation";  
-				} 
-			} 
+					json.created = "without any annotation";
+				}
+			}
 		} else if (code == "74") {
 			if (json.subclass == "AcDbSpline") {
 				json.number_of_fit_points = parseFloat(value);
 			} else if (json.subclass == "AcDbLeader") {
 				if (value == "0") {
-					json.hookline_direction = "opposite direction from the horizontal vector";  
+					json.hookline_direction = "opposite direction from the horizontal vector";
 				} else if (value == "1") {
-					json.hookline_direction = "the same direction as horizontal vector";  
-				} 
+					json.hookline_direction = "the same direction as horizontal vector";
+				}
 			} else if (json.subclass == "AcDbMline") {
-				if (json.vertices && json.vertices.length > 0) {					
+				if (json.vertices && json.vertices.length > 0) {
 					json.vertices[json.vertices.length - 1].number_of_parameters = parseFloat(value);
 				}
-			} 
-		} else if (code == "75") {					
+			}
+		} else if (code == "75") {
 			if (json.subclass == "AcDbHatch") {
 				if (value == "0") {
-					json.style = "Hatch odd parity area";  
+					json.style = "Hatch odd parity area";
 				} else if (value == "1") {
-					json.style = "Hatch outermost area only ";  
+					json.style = "Hatch outermost area only ";
 				} else if (value == "2") {
-					json.style = "Hatch through entire area";  
-				} 
+					json.style = "Hatch through entire area";
+				}
 			} else if (json.subclass == "AcDbLeader") {
 				if (value == "0") {
-					json.has_hookline = "No";  
+					json.has_hookline = "No";
 				} else if (value == "1") {
-					json.has_hookline = "Yes";  
-				} 
+					json.has_hookline = "Yes";
+				}
 			} else if (json.subclass == "AcDbMline") {
-				if (json.vertices && json.vertices.length > 0) {					
+				if (json.vertices && json.vertices.length > 0) {
 					json.vertices[json.vertices.length - 1].number_of_area_fill_parameters = parseFloat(value);
 				}
-			} 
-		} else if (code == "76") {					
+			}
+		} else if (code == "76") {
 			if (json.subclass == "AcDbHatch") {
 				if (value == "0") {
-					json.pattern = "User-defined";  
+					json.pattern = "User-defined";
 				} else if (value == "1") {
-					json.pattern = "Predefined";  
+					json.pattern = "Predefined";
 				} else if (value == "2") {
-					json.pattern = "Custom";  
-				} 
+					json.pattern = "Custom";
+				}
 			} else if (json.subclass == "AcDbLeader") {
 				json.number_of_vertices = parseFloat(value);
 			}
 		} else if (code == "77") {
 			if (json.subclass == "AcDbLeader") {
 				json.color = value;
-			} 
+			}
 		} else if (code == "78") {
 			if (json.subclass == "AcDbHatch") {
 				json.number_of_lines = parseFloat(value);
-			} 
+			}
 		} else if (code == "90") {
 			if (json.subclass == "AcDbPolyline") {
 				json.number_of_vertices = parseFloat(value);
-			} 
+			}
 		} else if (code == "91") {
 			if (json.subclass == "AcDbHatch") {
 				json.number_of_boundary_paths = parseFloat(value);
@@ -1625,7 +1625,7 @@ const Entities = class {
 				json.number_of_clip_vertices = parseFloat(value);
 			} else if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference" && json.n_rows === undefined) {
 				json.n_rows = parseFloat(value);
-			}			
+			}
 		} else if (code == "92") {
 			if (json.etype == "ACAD_TABLE" && json.subclass === undefined) {
 				json.n_bytes_proxy_graphics = parseFloat(value);
@@ -1635,7 +1635,7 @@ const Entities = class {
 		} else if (code == "98") {
 			if (json.subclass == "AcDbHatch") {
 				json.number_of_seed_points = parseFloat(value);
-			} 
+			}
 		} else if (code == "100" && value != "AcDbEntity" && value != "AcDbBlockBegin") {
 			if (json.subclass && json.subclass != value) {
 				json.specific_type = value;
@@ -1667,7 +1667,7 @@ const Entities = class {
 				} else {
 					json.block_scale = parseFloat(value);
 				}
-			}			
+			}
 		} else if (code == "145") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
@@ -1675,30 +1675,30 @@ const Entities = class {
 				} else {
 					json.rotation = parseFloat(value);
 				}
-			}	
+			}
 		} else if (code == "170") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				let txt;
 				if (value == "1") {
-					txt = "Top left";  
+					txt = "Top left";
 				} else if (value == "2") {
-					txt = "Top center";  
+					txt = "Top center";
 				} else if (value == "3") {
-					txt = "Top right";  
+					txt = "Top right";
 				} else if (value == "4") {
-					txt = "Middle left";  
+					txt = "Middle left";
 				} else if (value == "5") {
-					txt = "Middle center";  
+					txt = "Middle center";
 				} else if (value == "6") {
-					txt = "Middle right";  
+					txt = "Middle right";
 				} else if (value == "7") {
-					txt = "Bottom left";  
+					txt = "Bottom left";
 				} else if (value == "8") {
-					txt = "Bottom center";  
+					txt = "Bottom center";
 				} else if (value == "9") {
-					txt = "Bottom right";  
-				} 
-				if (json.cells && json.cells[json.cells.length - 1]) {					
+					txt = "Bottom right";
+				}
+				if (json.cells && json.cells[json.cells.length - 1]) {
 					json.cells[json.cells.length - 1].alignement = txt;
 				} else {
 					json.alignement = txt;
@@ -1718,13 +1718,13 @@ const Entities = class {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
 					json.cells[json.cells.length - 1].border_width = parseFloat(value);
-				} 
+				}
 			}
 		} else if (code == "176") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
 					json.cells[json.cells.length - 1].border_height = parseFloat(value);
-				} 
+				}
 			}
 		} else if (code == "210") {
 			if (json.subclass == "AcDbLeader") {
@@ -1733,58 +1733,58 @@ const Entities = class {
 			} else if (json.subclass == "AcDbFcf") {
 				if (!json.extrusion_direction) json.extrusion_direction = {};
 				json.extrusion_direction.x = parseFloat(value);
-			} 
+			}
 		} else if (code == "211") {
 			if (json.subclass == "AcDbLeader") {
 				if (!json.horizontal_direction) json.horizontal_direction = [];
 				json.horizontal_direction.push({x: parseFloat(value)});
-			} 
+			}
 		} else if (code == "212") {
 			if (json.subclass == "AcDbLeader") {
 				if (!json.offset_from_insertion_point) json.offset_from_insertion_point = [];
 				json.offset_from_insertion_point.push({x: parseFloat(value)});
-			} 
+			}
 		} else if (code == "213") {
 			if (json.subclass == "AcDbLeader") {
 				if (!json.offset_from_annotation) json.offset_from_annotation = [];
 				json.offset_from_annotation.push({x: parseFloat(value)});
-			} 
+			}
 		} else if (code == "220") {
-			if (json.subclass == "AcDbLeader") {				
+			if (json.subclass == "AcDbLeader") {
 				json.normal_vector[json.normal_vector.length - 1]["y"] = parseFloat(value);
 			} else if (json.subclass == "AcDbFcf") {
 				json.extrusion_direction.y = parseFloat(value);
-			} 
+			}
 		} else if (code == "221") {
-			if (json.subclass == "AcDbLeader") {				
+			if (json.subclass == "AcDbLeader") {
 				json.horizontal_direction[json.horizontal_direction.length - 1]["y"] = parseFloat(value);
-			} 
+			}
 		} else if (code == "222") {
-			if (json.subclass == "AcDbLeader") {				
+			if (json.subclass == "AcDbLeader") {
 				json.offset_from_insertion_point[json.offset_from_insertion_point.length - 1]["y"] = parseFloat(value);
-			} 
+			}
 		} else if (code == "223") {
-			if (json.subclass == "AcDbLeader") {				
+			if (json.subclass == "AcDbLeader") {
 				json.offset_from_annotation[json.offset_from_annotation.length - 1]["y"] = parseFloat(value);
-			} 
+			}
 		} else if (code == "230") {
-			if (json.subclass == "AcDbLeader") {				
+			if (json.subclass == "AcDbLeader") {
 				json.normal_vector[json.normal_vector.length - 1]["z"] = parseFloat(value);
-			} else if (json.subclass == "AcDbFcf") {				
+			} else if (json.subclass == "AcDbFcf") {
 				json.extrusion_direction.z = parseFloat(value);
-			} 
+			}
 		} else if (code == "231") {
-			if (json.subclass == "AcDbLeader") {				
+			if (json.subclass == "AcDbLeader") {
 				json.horizontal_direction[json.horizontal_direction.length - 1]["z"] = parseFloat(value);
-			} 
+			}
 		} else if (code == "232") {
-			if (json.subclass == "AcDbLeader") {				
+			if (json.subclass == "AcDbLeader") {
 				json.offset_from_insertion_point[json.offset_from_insertion_point.length - 1]["z"] = parseFloat(value);
-			} 
+			}
 		} else if (code == "233") {
-			if (json.subclass == "AcDbLeader") {				
+			if (json.subclass == "AcDbLeader") {
 				json.offset_from_annotation[json.offset_from_annotation.length - 1]["z"] = parseFloat(value);
-			} 
+			}
 		} else if (code == "275") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
@@ -1792,7 +1792,7 @@ const Entities = class {
 				} else {
 					json.line_weight_right = value;
 				}
-			}			
+			}
 		} else if (code == "276") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
@@ -1800,7 +1800,7 @@ const Entities = class {
 				} else {
 					json.line_weight_bottom = value;
 				}
-			}			
+			}
 		} else if (code == "278") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
@@ -1808,7 +1808,7 @@ const Entities = class {
 				} else {
 					json.line_weight_left = value;
 				}
-			}			
+			}
 		} else if (code == "279") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
@@ -1816,7 +1816,7 @@ const Entities = class {
 				} else {
 					json.line_weight_top = value;
 				}
-			}			
+			}
 		} else if (code == "289") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
@@ -1824,51 +1824,51 @@ const Entities = class {
 				} else {
 					json.top_boreder_visible = value == "1" ? true : false;
 				}
-			}			
-		} else if (code == "290") {					
+			}
+		} else if (code == "290") {
 			if (json.subclass == "AcDbRasterImage") {
 				if (value == "0") {
-					json.clip_mode = "Outside";  
+					json.clip_mode = "Outside";
 				} else if (value == "1") {
-					json.clip_mode = "Inside";  
+					json.clip_mode = "Inside";
 				}
-			} 
-		} else if (code == "302") {					
+			}
+		} else if (code == "302") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
 					json.cells[json.cells.length - 1].text = value;
-				} 
+				}
 			}
 		} else if (code == "303") {
 			if (json.etype == "ACAD_TABLE" && json.subclass == "AcDbBlockReference") {
 				if (json.cells && json.cells[json.cells.length - 1]) {
 					json.cells[json.cells.length - 1].text = json.cells[json.cells.length - 1].text + value;
-				} 
+				}
 			}
-		} else if (code == "310") {					
+		} else if (code == "310") {
 			if (json.subclass == "AcDbModelerGeometry") {
-				json.binary_data = value; 
+				json.binary_data = value;
 			} else if (json.etype == "ACAD_TABLE" && json.subclass === undefined) {
 				if (!json.proxy_graphics_data) json.proxy_graphics_data = "";
 				json.proxy_graphics_data = json.proxy_graphics_data + value;
 			}
-		} else if (code == "450") {					
+		} else if (code == "450") {
 			if (json.subclass == "AcDbHatch") {
 				if (value == "0") {
-					json.gradient = false;  
+					json.gradient = false;
 				} else if (value == "1") {
-					json.gradient = true;  
+					json.gradient = true;
 				}
-			} 
+			}
 		}
 	}
-	
-	processData = (array) => {		
-		let COUNT = 0;			
-		while(COUNT < array.length - 1) {			
+
+	processData = (array) => {
+		let COUNT = 0;
+		while(COUNT < array.length - 1) {
 			let code = array[COUNT].trim();
 			let value = array[COUNT + 1].trim();
-			
+
 			if (code == "0" && value == "SECTION") {
 				const code2 = array[COUNT + 2].trim();
 				const value2 = array[COUNT + 3].trim();
@@ -1877,12 +1877,12 @@ const Entities = class {
 					COUNT = this.getBlocks(array, COUNT + 4);
 					this.getEntities(array, COUNT + 4);
 					return;
-				} 
+				}
 			}
 			COUNT = COUNT + 2;
 		}
-	}	
-	
+	}
+
 	getEllipseAngles = (entity) => {
 		let dx = entity.major_end_dx;
 		let dy = entity.major_end_dy;
@@ -1895,18 +1895,18 @@ const Entities = class {
 		}
 		const ratio = entity.minorToMajor;
 		const a = Math.sqrt(dx*dx + dy*dy);
-		const b = ratio*a;		
-		const theta = Math.atan2(dy, dx);		
+		const b = ratio*a;
+		const theta = Math.atan2(dy, dx);
 		let sa = entity.start_parameter;
 		let ea = entity.end_parameter;
-		
+
 		const zs = (a - b)*Math.sin(sa);
 		const ze = (a - b)*Math.sin(ea);
 		const dx1s = zs*Math.sin(theta);
 		const dy1s = zs*Math.cos(theta);
 		const dx1e = ze*Math.sin(theta);
 		const dy1e = ze*Math.cos(theta);
-		
+
 		const xp1s = a*Math.cos(sa + theta);
 		const yp1s = a*Math.sin(sa + theta);
 		const xp1e = a*Math.cos(ea + theta);
@@ -1925,7 +1925,7 @@ const Entities = class {
 			if (dx) entity.start_x = entity.x + a*Math.cos(sa)*Math.cos(theta) - b*Math.sin(sa)*Math.sin(theta);
 			if (dy) entity.start_y = entity.y + a*Math.cos(sa)*Math.sin(theta) + b*Math.sin(sa)*Math.cos(theta);
 			if (dz) entity.start_z = entity.z + a*Math.cos(sa)*Math.sin(theta) + b*Math.sin(sa)*Math.cos(theta);
-			if (dx) entity.end_x = entity.x + a*Math.cos(ea)*Math.cos(theta) - b*Math.sin(ea)*Math.sin(theta); 
+			if (dx) entity.end_x = entity.x + a*Math.cos(ea)*Math.cos(theta) - b*Math.sin(ea)*Math.sin(theta);
 			if (dy) entity.end_y = entity.y + a*Math.cos(ea)*Math.sin(theta) + b*Math.sin(ea)*Math.cos(theta);
 			if (dz) entity.end_z = entity.z + a*Math.cos(ea)*Math.sin(theta) + b*Math.sin(ea)*Math.cos(theta);
 		}
@@ -1933,21 +1933,21 @@ const Entities = class {
 		entity.area = A.area;
 		if (A.area_sector) entity.area_sector = A.area_sector;
 		if (A.area_full) entity.area_full = A.area_full;
-	}	
-	
+	}
+
 	checkText = (text, item) => {
 		if (item.subclass != "AcDbText") return false;
 		if (text.height !== undefined && item.height != text.height) return false;
 		if (text.rotation !== undefined && item.rotation != text.rotation) return false;
 		if (text.style && (!item.style || item.style.toLowerCase() != text.style.toLowerCase())) return false;
 		if (text.regex && (!item.text || !text.regex.test(item.text))) return false;
-		
+
 		let txt = item.text;
 		if (text.i && txt) {
 			txt = txt.toLowerCase();
 		}
 		let eq = !text.equals, neq = !text.notequals, st = !text.starts, nst = !text.notstarts, en = !text.ends, nen = !text.notends, con = !text.contains, ntc = !text.notcontains;
-		
+
 		if (text.equals) {
 			eq = text.i ? (text.equals.toLowerCase() == txt) : (text.equals == txt);
 		}
@@ -1956,18 +1956,18 @@ const Entities = class {
 		}
 		if (text.starts) {
 			st = text.i ? (txt && txt.indexOf(text.starts.toLowerCase()) == 0) : (txt && txt.indexOf(text.starts) == 0);
-		} 
+		}
 		if (text.notstarts) {
 			nst = text.i ? (!txt || txt.indexOf(text.notstarts.toLowerCase()) != 0) : (!txt || txt.indexOf(text.notstarts) != 0);
-		} 
+		}
 		if (text.ends) {
-			en = text.i ? (txt && txt.lastIndexOf(text.ends.toLowerCase()) != -1 && (txt.lastIndexOf(text.ends.toLowerCase()) == (txt.length - text.ends.length))) : 
+			en = text.i ? (txt && txt.lastIndexOf(text.ends.toLowerCase()) != -1 && (txt.lastIndexOf(text.ends.toLowerCase()) == (txt.length - text.ends.length))) :
 						  (txt && txt.lastIndexOf(text.ends) != -1 && (txt.lastIndexOf(text.ends) == (txt.length - text.ends.length)));
-		} 
+		}
 		if (text.notends) {
-			nen = text.i ? (!txt || txt.lastIndexOf(text.notends.toLowerCase()) == -1 || (txt.lastIndexOf(text.notends.toLowerCase()) != (txt.length - text.notends.length))) : 
+			nen = text.i ? (!txt || txt.lastIndexOf(text.notends.toLowerCase()) == -1 || (txt.lastIndexOf(text.notends.toLowerCase()) != (txt.length - text.notends.length))) :
 						  (!txt || txt.lastIndexOf(text.notends) == -1 || (txt.lastIndexOf(text.notends) != (txt.length - text.notends.length)));
-		} 
+		}
 		if (text.contains) {
 			con = text.i ? (txt && txt.indexOf(text.contains.toLowerCase()) != -1) : (txt && txt.indexOf(text.contains) != -1);
 		}
@@ -1975,25 +1975,25 @@ const Entities = class {
 			ntc = text.i ? (txt && txt.indexOf(text.notcontains.toLowerCase()) == -1) : (txt && txt.indexOf(text.notcontains) == -1);
 		}
 		if (text.operator && (text.operator == "||" || text.operator.toLowerCase().trim() == "or")) {
-			return ((text.equals && eq) || (text.starts && st) || (text.ends && en) || (text.contains && con) || 
+			return ((text.equals && eq) || (text.starts && st) || (text.ends && en) || (text.contains && con) ||
 			(text.notequals && neq) || (text.notstarts && nst) || (text.notends && nen) || (text.notcontains && ntc));
 		} else {
 			return eq && st && en && con && neq && nst && nen && ntc;
 		}
-		
+
 	}
 
-	checkColor = (color, item) => {	
+	checkColor = (color, item) => {
 		if ((typeof color == "number" && color == 0) || (typeof color == "string" && color.trim() == "0")) {
-			color = "byblock";		
+			color = "byblock";
 		} else if ((typeof color == "number" && color == 256) || (typeof color == "string" && color.trim() == "256")) {
-			color = "bylayer";		
+			color = "bylayer";
 		} else if (typeof color == "number") {
 			color = "" + color;
 		}
 		return color == item.color.toLowerCase();
 	}
-	
+
 	getAxes = (plane) => {
 		if (plane) {
 			plane = plane.trim();
@@ -2002,13 +2002,13 @@ const Entities = class {
 			}
 		}
 		let ax1 = "x", ax2 = "y";
-		if (plane) {			
+		if (plane) {
 			ax1 = plane.substring(0,1);
 			ax2 = plane.substring(2,3);
 		}
 		return [ax1, ax2];
 	}
-	
+
 	getCorners = (entity, plane) => {
 		if (typeof entity != "object") {
 			throw new Error(ErrorMessages.INCORRECT_PARAMS);
@@ -2020,22 +2020,22 @@ const Entities = class {
 			return;
 		}
 		let corners = [];
-				
+
 		if (entity.subclass == "AcDbPolyline") {
-			const vertices = entity.vertices;			
+			const vertices = entity.vertices;
 			let temp = [];
 			let x0 = vertices[vertices.length - 1][ax1], y0 = vertices[vertices.length - 1][ax2], x1 = vertices[0][ax1], y1 = vertices[0][ax2], x2, y2;
 			for (let i = 1; i <= vertices.length; i++) {
-				let j = i < vertices.length ? i : 0;				
+				let j = i < vertices.length ? i : 0;
 				x2 = vertices[j][ax1];
-				y2 = vertices[j][ax2];	
-				const m1 = Math.abs((y1 - y0)/(x1 - x0));	
-				const m2 = Math.abs((y2 - y1)/(x2 - x1));				
+				y2 = vertices[j][ax2];
+				const m1 = Math.abs((y1 - y0)/(x1 - x0));
+				const m2 = Math.abs((y2 - y1)/(x2 - x1));
 				const txt = x1 + "," + y1;
 				if (Math.abs(m1 - m2) > this.tolerance && temp.indexOf(txt) == -1) {
 					corners.push(vertices[i == vertices.length ? (vertices.length - 1) : (j - 1)]);
 					temp.push(txt);
-				}					
+				}
 				x0 = x1;
 				y0 = y1;
 				x1 = x2;
@@ -2044,12 +2044,12 @@ const Entities = class {
 		}
 		return corners;
 	}
-	
+
 	checkNoOfSides = (criteria, item, ax1, ax2) => {
 		if (item.subclass == "AcDbPolyline") {
 			const vertices = item.vertices;
 			let temp = [vertices[0]], nSides;
-			for (let i = 1; i < vertices.length; i++) {				
+			for (let i = 1; i < vertices.length; i++) {
 				const isCorner = this.checkCorner([vertices[i][ax1], vertices[i][ax2]], item, ax1, ax2);
 				let exists = false;
 				for (let j = 1; j < temp.length; j++) {
@@ -2068,7 +2068,7 @@ const Entities = class {
 			}
 			const n = criteria.value || 1;
 			const c = criteria.comparison || "gte";
-			
+
 			if (c == "eq") {
 				return n == nSides;
 			} else if (c == "gt") {
@@ -2081,11 +2081,11 @@ const Entities = class {
 				return nSides <= n;
 			} else if (c == "ne") {
 				return nSides != n;
-			} 
+			}
 		}
 		return false;
 	}
-	
+
 	checkBetween = (boundaries, item) => {
 		const xmin = boundaries.xmin || -Infinity;
 		const xmax = boundaries.xmax || Infinity;
@@ -2093,7 +2093,7 @@ const Entities = class {
 		const ymax = boundaries.ymax || Infinity;
 		const zmin = boundaries.zmin || -Infinity;
 		const zmax = boundaries.zmax || Infinity;
-		
+
 		if (item.subclass == "AcDbLine" || item.subclass == "AcDbRay" || item.subclass == "AcDbMline") {
 			return (item.start_x - xmin)*(item.start_x - xmax) <= this.tolerance && (item.start_y - ymin)*(item.start_y - ymax) <= this.tolerance &&
 			(item.start_z - zmin)*(item.start_z - zmax) <= this.tolerance && (item.end_x - xmin)*(item.end_x - xmax) <= this.tolerance &&
@@ -2110,7 +2110,7 @@ const Entities = class {
 		} else if (item.subclass == "AcDbSpline") {
 			const points = item.control_points;
 			for (let i = 0; i < points.length; i++) {
-				if ((points[i].x - xmin)*(points[i].x - xmax) > this.tolerance || (points[i].y - ymin)*(points[i].y - ymax) > this.tolerance || 
+				if ((points[i].x - xmin)*(points[i].x - xmax) > this.tolerance || (points[i].y - ymin)*(points[i].y - ymax) > this.tolerance ||
 				 (points[i].z - zmin)*(points[i].z - zmax) > this.tolerance) {
 					return false;
 				}
@@ -2119,7 +2119,7 @@ const Entities = class {
 		} else if (item.subclass == "AcDbTrace") {
 			const corners = item.corners;
 			for (let i = 0; i < corners.length; i++) {
-				if ((corners[i].x - xmin)*(corners[i].x - xmax) > this.tolerance || (corners[i].y - ymin)*(corners[i].y - ymax) > this.tolerance || 
+				if ((corners[i].x - xmin)*(corners[i].x - xmax) > this.tolerance || (corners[i].y - ymin)*(corners[i].y - ymax) > this.tolerance ||
 				(corners[i].z - zmin)*(corners[i].z - zmax) > this.tolerance) {
 					return false;
 				}
@@ -2128,7 +2128,7 @@ const Entities = class {
 		} else if (item.subclass == "AcDbHatch") {
 			const spoints = item.seed_points;
 			for (let i = 0; i < spoints.length; i++) {
-				if ((spoints[i].x - xmin)*(spoints[i].x - xmax) > this.tolerance || (spoints[i].y - ymin)*(spoints[i].y - ymax) > this.tolerance || 
+				if ((spoints[i].x - xmin)*(spoints[i].x - xmax) > this.tolerance || (spoints[i].y - ymin)*(spoints[i].y - ymax) > this.tolerance ||
 				(spoints[i].z - zmin)*(spoints[i].z - zmax) > this.tolerance) {
 					return false;
 				}
@@ -2136,14 +2136,14 @@ const Entities = class {
 			return true;
 		} else {
 			return (item.x - xmin)*(item.x - xmax) <= this.tolerance && (item.y - ymin)*(item.y - ymax) <= this.tolerance && (item.z - zmin)*(item.z - zmax) <= this.tolerance;
-		} 
-	}	
-	
+		}
+	}
+
 	filter = (criteria, entities, plane) => {
 		if (!criteria || Array.isArray(criteria) || typeof criteria != "object") {
 			throw new Error(ErrorMessages.FILTER_CRITERIA);
 			return;
-		}			
+		}
 		if (!entities) entities = this.entities;
 		if (!entities) {
 			throw new Error(ErrorMessages.FILTER);
@@ -2158,60 +2158,60 @@ const Entities = class {
 			throw new Error(ErrorMessages.INCORRECT_PARAMS);
 			return;
 		}
-		
+
 		let etype = [];
 		if (Array.isArray(criteria.etype)) {
 			criteria.etype.forEach((t) => {
 				etype.push(`acdb${t.toLowerCase().trim()}`);
 			});
 		}
-		
-		return entities.filter((item, index) => {	
+
+		return entities.filter((item, index) => {
 			return (etype.length == 0 || etype.indexOf(item.subclass.toLowerCase()) != -1 || (item.specific_type && etype.indexOf(item.specific_type.toLowerCase()) != -1)) &&
-			(!criteria.layer || !Array.isArray(criteria.layer) || criteria.layer.filter((la) => la == item.layer).length > 0) && 
+			(!criteria.layer || !Array.isArray(criteria.layer) || criteria.layer.filter((la) => la == item.layer).length > 0) &&
 			(!criteria.between || this.checkBetween(criteria.between, item)) &&
 			(!criteria.radius || criteria.radius == item.radius) &&
 			(criteria.text === undefined || this.checkText(criteria.text, item)) &&
 			(criteria.color === undefined || this.checkColor(criteria.color, item)) &&
 			(!criteria.line_type || (item.line_type && criteria.line_type.toLowerCase() == item.line_type.toLowerCase())) &&
 			(!criteria.visibility || (item.visibility && criteria.visibility.toLowerCase() == item.visibility.toLowerCase())) &&
-			(!criteria.arc || Math.abs(criteria.arc.angle*(criteria.arc.unit == "degrees" ? 1 : 180/Math.PI) - Math.abs(item.start_angle - item.end_angle)) < this.tolerance) &&	
+			(!criteria.arc || Math.abs(criteria.arc.angle*(criteria.arc.unit == "degrees" ? 1 : 180/Math.PI) - Math.abs(item.start_angle - item.end_angle)) < this.tolerance) &&
 			(!criteria.nsides || this.checkNoOfSides(criteria.nsides, item, ax1, ax2)) &&
 			(!criteria.where || this.filterWhere(criteria.where, item, plane))
 		});
 	}
-	
+
 	checkCorner = (data, item, ax1, ax2) => {
 		if (!Array.isArray(data) && data.subclass != "AcDbPoint") return false;
 		const etype = item.subclass;
 		const x = Array.isArray(data) ? data[0] : data[ax1];
 		const y = Array.isArray(data) ? data[1] : data[ax2];
-		if (etype == "AcDbPoint" || etype == "AcDbText" || etype == "AcDbSpline" || etype == "AcDbMline" 
+		if (etype == "AcDbPoint" || etype == "AcDbText" || etype == "AcDbSpline" || etype == "AcDbMline"
 			|| etype == "AcDbLine" || etype == "AcDbCircle" || etype == "AcDbEllipse") {
 			return false;
 		} else if (etype == "AcDbPolyline") {
-			const vertices = item.vertices;			
+			const vertices = item.vertices;
 			let x0 = vertices[vertices.length - 1][ax1], y0 = vertices[vertices.length - 1][ax2], x1 = vertices[0][ax1], y1 = vertices[0][ax2], x2, y2;
 			for (let i = 1; i <= vertices.length; i++) {
-				let j = i < vertices.length ? i : 0;				
+				let j = i < vertices.length ? i : 0;
 				x2 = vertices[j][ax1];
-				y2 = vertices[j][ax2];	
-				const m1 = Math.abs((y1 - y0)/(x1 - x0));	
-				const m2 = Math.abs((y2 - y1)/(x2 - x1));				
+				y2 = vertices[j][ax2];
+				const m1 = Math.abs((y1 - y0)/(x1 - x0));
+				const m2 = Math.abs((y2 - y1)/(x2 - x1));
 				const txt = x1 + "," + y1;
 				if (Math.abs(m1 - m2) > this.tolerance && Math.abs(x - x1) <= this.tolerance && Math.abs(y - y1) <= this.tolerance) {
 					return true;
-				}					
+				}
 				x0 = x1;
 				y0 = y1;
 				x1 = x2;
 				y1 = y2;
 			}
 			return false;
-		} 
+		}
 		return false;
-	}	
-	
+	}
+
 	checkEccentric = (entity1, entity2, plane) => {
 		if (typeof entity1 != "object" || typeof entity2 != "object") {
 			throw new Error(ErrorMessages.INCORRECT_PARAMS);
@@ -2234,14 +2234,14 @@ const Entities = class {
 			if ((Math.abs(xc1 - xc2) < this.tolerance && Math.abs(yc1 - yc2) < this.tolerance) || Math.abs(r1 - r2) < this.tolerance) {
 				return false;
 			}
-			
-			const isInside = ((xc1 - xc2)*(xc1 - xc2) + (yc1 - yc2)*(yc1 - yc2)) + this.tolerance < (r2 - r1)*(r2 - r1);  
+
+			const isInside = ((xc1 - xc2)*(xc1 - xc2) + (yc1 - yc2)*(yc1 - yc2)) + this.tolerance < (r2 - r1)*(r2 - r1);
 				// the center of the inner circle should be within an imaginery circle (with the same center as the outer circle and a radius of |r2 - r1|)
 			return isInside;
 		}
-		return false;		
+		return false;
 	}
-	
+
 	checkConcentric = (entity1, entity2, plane) => {
 		if (typeof entity1 != "object" || typeof entity2 != "object") {
 			throw new Error(ErrorMessages.INCORRECT_PARAMS);
@@ -2254,7 +2254,7 @@ const Entities = class {
 		}
 		const etype1 = entity1.subclass;
 		const etype2 = entity2.subclass;
-		
+
 		if (etype1 == "AcDbCircle" && etype2 == "AcDbCircle") {
 			let xc1 = entity1[ax1];
 			let yc1 = entity1[ax2];
@@ -2265,8 +2265,8 @@ const Entities = class {
 			return Math.abs(xc1 - xc2) < this.tolerance && Math.abs(yc1 - yc2) < this.tolerance && Math.abs(r1 - r2) > this.tolerance;
 		}
 		return false;
-	}	
-	
+	}
+
 	checkif = (entity1, criteria, entity2, plane) => {
 		if (!entity1 || typeof criteria != "string") {
 			throw new Error(ErrorMessages.INCORRECT_PARAMS);
@@ -2283,7 +2283,7 @@ const Entities = class {
 				const y1 = entity1[`start_${ax1}`];
 				const x2 = entity1[`end_${ax1}`];
 				const y2 = entity1[`end_${ax1}`];
-				return (criteria == "horizontal" && Math.abs(y2 - y1) <= this.tolerance) || 
+				return (criteria == "horizontal" && Math.abs(y2 - y1) <= this.tolerance) ||
 				       (criteria == "vertical" && Math.abs(x2 - x1) <= this.tolerance) ||
 					   (criteria == "inclined" && Math.abs(x2 - x1) > this.tolerance && Math.abs(y2 - y1) > this.tolerance);
 			}
@@ -2292,8 +2292,8 @@ const Entities = class {
 				throw new Error(ErrorMessages.INCORRECT_PARAMS);
 				return;
 			}
-		
-			if (criteria == "inside") { 
+
+			if (criteria == "inside") {
 				return Checkif.checkInside(entity1, entity2, plane, this.getAxes, this.tolerance);
 			} else if (criteria == "outside") {
 				return Checkif.checkOutside(entity1, entity2, plane, this.getAxes, this.tolerance);
@@ -2309,16 +2309,16 @@ const Entities = class {
 				return Checkif.checkDelaunay(entity1, entity2, plane, this.getAxes, this.tolerance);
 			} else if (criteria == "convex") {
 				return Checkif.checkConvex(entity1, entity2, plane, this.getAxes, this.tolerance);
-			} 		
-		}		
+			}
+		}
 	}
-	
+
 	filterWhere = (criteria, item, plane) => {
 		if (!item || !Array.isArray(criteria) || typeof item != "object") {
 			throw new Error(ErrorMessages.INCORRECT_PARAMS);
 			return;
 		}
-		
+
 		let [ax1, ax2] = this.getAxes(plane);
 		if (plane && ax1 === undefined && ax2 === undefined) {
 			throw new Error(ErrorMessages.INCORRECT_PARAMS);
@@ -2329,8 +2329,8 @@ const Entities = class {
 			const condition = criteria[i].condition;
 			const reference = criteria[i].reference;
 			if (item == reference) return false;
-			
-			if (condition == "inside") { 
+
+			if (condition == "inside") {
 				doesFulfil = Checkif.checkInside(item, reference, plane, this.getAxes, this.tolerance);
 			} else if (condition == "outside") {
 				doesFulfil = Checkif.checkOutside(item, reference, plane, this.getAxes, this.tolerance);
@@ -2352,73 +2352,73 @@ const Entities = class {
 					const y1 = item[`start_${ax1}`];
 					const x2 = item[`end_${ax1}`];
 					const y2 = item[`end_${ax1}`];
-					doesFulfil = (condition == "horizontal" && Math.abs(y2 - y1) <= this.tolerance) || 
+					doesFulfil = (condition == "horizontal" && Math.abs(y2 - y1) <= this.tolerance) ||
 						         (condition == "vertical" && Math.abs(x2 - x1) <= this.tolerance) ||
 						         (condition == "inclined" && Math.abs(x2 - x1) > this.tolerance && Math.abs(y2 - y1) > this.tolerance);
 				} else {
 					return false;
 				}
 			}
-			
+
 			if (!doesFulfil) return false;
 		}
-		
+
 		return doesFulfil;
 	}
-	
+
 	distance = (entity, entity2, plane) => {
 		return Distance(entity, entity2, plane, this.getAxes, this.tolerance);
 	}
-	
+
 	length = (entity, plane) => {
-		return Length(entity, plane, this.getAxes, this.tolerance);			
-	}	
-	
-	intersection = (entity1, entity2, plane) => {
-		return Intersection(entity1, entity2, plane, this.getAxes, this.tolerance);		
+		return Length(entity, plane, this.getAxes, this.tolerance);
 	}
-	
+
+	intersection = (entity1, entity2, plane) => {
+		return Intersection(entity1, entity2, plane, this.getAxes, this.tolerance);
+	}
+
 	closest = (entity, etype, mode, list) => {
 		return Closest(entity, etype, mode, list, this.entities, this.tolerance);
 	}
-	
+
 	triangulate = (vertices, plane)  => {
 		return Triangulate(vertices, plane, this.getAxes, this.tolerance);
 	}
-	
+
 	nurbs = (spline)  => {
 		return BSpline(spline);
 	}
-	
+
 	area = (entity, plane)  => {
 		return Area(entity, plane, this.getAxes, this.tolerance);
 	}
-	
+
 	connected = (entity, plane)  => {
 		return Connected(entity, plane, this.entities, this.getAxes, this.tolerance);
 	}
-	
+
 	crossing = (entity, etypes, plane)  => {
 		return Crossing(entity, etypes, plane, this.entities, this.getAxes, this.tolerance);
 	}
-	
+
 	istangent = (line, circle, plane)  => {
 		return Tangent.istangent(line, circle, plane, this.getAxes, this.tolerance);
 	}
-	
+
 	tangent = (circle, angle, length, plane)  => {
 		return Tangent.tangent(circle, angle, length, plane, this.getAxes, this.tolerance);
 	}
-	
+
 	circumcircle = (p1, p2, p3, plane) => {
 		let [ax1, ax2] = this.getAxes(plane);
-	
+
 		if (plane && ax1 === undefined && ax2 === undefined) {
 			throw new Error(ErrorMessages.INCORRECT_PARAMS);
 			return;
-		}		
-		let xc, yc, r;	
-		 
+		}
+		let xc, yc, r;
+
 		const x1 = p1[ax1] || p1[0], y1 = p1[ax2] || p1[1];
 		let x2 = p2[ax1] || p2[0], y2 = p2[ax2] || p2[1];
 		let x3 = p3[ax1] || p3[0], y3 = p3[ax2] || p3[1];
@@ -2445,5 +2445,5 @@ const Entities = class {
 		}
 	}
 }
-	
+
 module.exports = Entities;
