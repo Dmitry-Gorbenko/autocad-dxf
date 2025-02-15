@@ -1368,9 +1368,9 @@ const Entities = class {
 			}
 		} else if (code == "70") {
 			if (json.subclass == "AcDbPolyline") {
-				if (value == "1" || value == "129") {
+				if ((value & 1) === 1) {
 					json.type = "Closed";
-				} else if (value == "128") {
+				} else if ((curr.value & 128) === 128) {
 					json.type = "Plinegen";
 				}
 			} else if (json.subclass == "AcDbSpline") {
